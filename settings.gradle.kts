@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "TeamProject11"
+rootProject.name = "TeamProject8"
 include(":app")
  

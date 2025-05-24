@@ -1,4 +1,4 @@
-package com.example.teamproject11
+package com.example.teamproject8
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,7 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.teamproject11.ui.theme.TeamProject11Theme
+import com.example.teamproject8.ui.theme.TeamProject11Theme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

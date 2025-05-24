@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.teamproject11"
+    namespace = "com.example.teamproject8"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.teamproject11"
+        applicationId = "com.example.teamproject8"
         minSdk = 34
         targetSdk = 35
         versionCode = 1
