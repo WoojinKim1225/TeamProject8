@@ -1,4 +1,4 @@
-package com.example.teamproject8.NEYfile
+package com.example.teamproject8.NEYfile.WorkManager
 
 import android.content.Context
 import androidx.work.OneTimeWorkRequestBuilder
@@ -24,7 +24,6 @@ object ScheduleRequest {
             .build()
 
         WorkManager.getInstance(context).enqueue(workRequest)
-
 
     }
 }

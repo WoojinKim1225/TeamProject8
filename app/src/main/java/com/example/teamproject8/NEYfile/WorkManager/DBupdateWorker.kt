@@ -1,4 +1,4 @@
-package com.example.teamproject8.NEYfile
+package com.example.teamproject8.NEYfile.WorkManager
 
 
 import android.app.PendingIntent
@@ -10,7 +10,7 @@ import androidx.work.WorkerParameters
 import com.example.teamproject8.MainActivity
 import com.example.week13.makeNotification
 
-class DBupdateWorker(context: Context, params:WorkerParameters): Worker(context, params) {
+class DBupdateWorker(context: Context, params:WorkerParameters): Worker(context, params) {      //DBUPdate 관련 함수
     override fun doWork(): Result {
         //DB UPdate Work
 
