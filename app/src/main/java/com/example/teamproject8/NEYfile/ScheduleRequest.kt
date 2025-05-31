@@ -7,7 +7,7 @@ import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 object ScheduleRequest {
-    private fun initWorkManager(context: Context, day:Int, hour:Int, minute:Int, second:Int) {
+    fun DBWorkManager(context: Context, day: Int, hour: Int, minute: Int, second: Int) {
         val curruntTime = Calendar.getInstance()
         val targetTime = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, hour)
@@ -18,10 +18,13 @@ object ScheduleRequest {
 
         val delay = targetTime.timeInMillis - curruntTime.timeInMillis
 
-        val workRequest = OneTimeWorkRequestBuilder<SchedulerWorker>()
+
+        val workRequest = OneTimeWorkRequestBuilder<DBupdateWorker>()
             .setInitialDelay(delay, TimeUnit.MILLISECONDS)
             .build()
 
         WorkManager.getInstance(context).enqueue(workRequest)
+
+
     }
 }
