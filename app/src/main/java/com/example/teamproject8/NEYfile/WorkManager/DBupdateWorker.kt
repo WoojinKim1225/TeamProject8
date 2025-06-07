@@ -4,15 +4,23 @@ package com.example.teamproject8.NEYfile.WorkManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-
+import androidx.work.CoroutineWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.teamproject8.MainActivity
 import com.example.week13.makeNotification
 
-class DBupdateWorker(context: Context, params:WorkerParameters): Worker(context, params) {      //DBUPdate 관련 함수
-    override fun doWork(): Result {
+class DBupdateWorker(context: Context, params:WorkerParameters): CoroutineWorker(context, params) {      //DBUPdate 관련 함수
+    override suspend fun doWork(): Result {
         //DB UPdate Work
+        val item_id = inputData.getInt("item_id", -1)
+        if(item_id == -1){
+            return Result.failure()
+        }
+        //tag 만들기
+        val tag:String = ""
+        //item
+
 
 
 
@@ -27,32 +35,11 @@ class DBupdateWorker(context: Context, params:WorkerParameters): Worker(context,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-        makeNotification(applicationContext, "", "", pendingIntent)
+        makeNotification(applicationContext, "", "", item_id, pendingIntent)
 
         //ScheduleRequest
-        ScheduleRequest.DBWorkManager(workContext, 1, 1, 1, 1)
+        ScheduleRequest.DBWorkManager(workContext, 1, 1, 1, 1, item_id, tag)
 
         return Result.success()
     }
-
-//    private fun showNotification(title: String, message: String) {
-//        val channelId = "notify_channel"
-//        val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//
-//        // 알림 채널 생성 (Android 8 이상)
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            val channel = NotificationChannel(
-//                channelId, "Default Channel", NotificationManager.IMPORTANCE_DEFAULT
-//            )
-//            notificationManager.createNotificationChannel(channel)
-//        }
-//
-//        val notification = NotificationCompat.Builder(applicationContext, channelId)
-//            .setContentTitle(title)
-//            .setContentText(message)
-//            .setSmallIcon(R.drawable.baseline_access_alarm_24)
-//            .build()
-//
-//    }
-
 }

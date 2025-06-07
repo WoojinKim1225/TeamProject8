@@ -7,10 +7,10 @@ import android.content.Context
 import androidx.core.app.NotificationCompat
 import com.example.teamproject8.R
 
-fun makeNotification(context: Context, title: String,message: String, pendingIntent:PendingIntent) {
+fun makeNotification(context: Context, title: String,message: String, id:Int, pendingIntent:PendingIntent) {
     val channelId = "ETDChannel"
     val channelName = "ETDChannel"
-    val notificationId = 0
+    val notificationId = id
 
     val notificationChannel =
         NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT)

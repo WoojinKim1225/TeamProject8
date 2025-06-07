@@ -1,5 +1,7 @@
 package com.example.teamproject8.NEYfile.AlarmUI
 
+import android.app.PendingIntent
+import android.content.Intent
 import android.graphics.drawable.Icon
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -15,23 +17,26 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.teamproject8.MainActivity
+import com.example.teamproject8.NEYfile.WorkManager.ScheduleRequest
 import com.example.teamproject8.R
+import com.example.week13.makeNotification
 
 @Composable
-fun SavedItemUI(modifier: Modifier = Modifier) {
-    val departLoc: String = "COEX"
-    val arrivedLoc: String = "Konkuk"
-    val arrivedTime: Int = 1
-    val titleIcon: Int = R.drawable.baseline_access_alarm_24
-    val departTime: Int = 1
+fun SavedItemUI(item: SavedItem, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    val appcontext = context.applicationContext
 
-    val locScript = departLoc + " ️-> " + arrivedLoc
-    val timeScript = "${departTime.toString()} -> ${arrivedTime.toString()}"
+    val titleIcon: Int = R.drawable.baseline_access_alarm_24
+
+    val locScript = item.departLoc + " ️-> " + item.arrivedLoc
+    val timeScript = "${item.departTime.toString()} -> ${item.arrivedTime.toString()}"
     Card {
         Column {
             Row(
@@ -68,7 +73,21 @@ fun SavedItemUI(modifier: Modifier = Modifier) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End
             ) {
-                Button(onClick = {},
+                Button(onClick = {
+                    val intent = Intent(appcontext, MainActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    }
+                    val pendingIntent = PendingIntent.getActivity(
+                        appcontext,
+                        0,
+                        intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                    )
+
+                    makeNotification(appcontext, "", "", 1 , pendingIntent)
+                    ScheduleRequest.DBWorkManager(appcontext, 1,1,1,1,1,"")
+                    //departTime의 날짜, 시간, 분, 초, Item DB_ID, tag 추가 필요
+                },
                     modifier = Modifier.padding(5.dp)) {
                     Text("Enabled")
                 }
@@ -81,6 +100,7 @@ fun SavedItemUI(modifier: Modifier = Modifier) {
 @Preview
 @Composable
 private fun SavedItemUI_prev() {
-    SavedItemUI()
+    val item = SavedItem()
+    SavedItemUI(item)
 
 }
