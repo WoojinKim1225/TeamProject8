@@ -1,4 +1,4 @@
-package com.example.week15
+package com.example.teamproject8.MYNfile.MapsFun
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -17,6 +17,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.example.teamproject8.MYNfile.MapsPackage.NaverMapApiService
+import com.example.teamproject8.MYNfile.MapsPackage.Summary
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapView

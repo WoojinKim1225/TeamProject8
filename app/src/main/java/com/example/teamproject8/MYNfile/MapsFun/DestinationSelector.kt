@@ -1,4 +1,4 @@
-package com.example.week15
+package com.example.teamproject8.MYNfile.MapsFun
 
 import android.util.Log
 import androidx.compose.foundation.clickable

@@ -1,5 +1,6 @@
-package com.example.week15
+package com.example.teamproject8.MYNfile.MapsPackage
 
+import com.example.teamproject8.MYNfile.MapsPackage.DirectionResponse
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Query

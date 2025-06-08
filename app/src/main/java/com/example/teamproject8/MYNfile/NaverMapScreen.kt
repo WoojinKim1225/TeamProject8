@@ -1,4 +1,4 @@
-package com.example.week15.screen
+package com.example.teamproject8.MYNfile
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -24,10 +24,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.example.week15.DestinationSelector
-import com.example.week15.NaverMapWithRouteView
-import com.example.week15.RouteSummaryView
-import com.example.week15.Summary
+import com.example.teamproject8.MYNfile.MapsFun.DestinationSelector
+import com.example.teamproject8.MYNfile.MapsFun.NaverMapWithRouteView
+import com.example.teamproject8.MYNfile.MapsFun.RouteSummaryView
+import com.example.teamproject8.MYNfile.MapsPackage.Summary
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
