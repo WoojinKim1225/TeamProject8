@@ -2,6 +2,7 @@ package com.example.teamproject8.MYNfile.MapsFun
 
 import android.content.Context
 import android.graphics.Color
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,19 +35,39 @@ import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapView
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.overlay.PathOverlay
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
-fun RouteSummaryView(
-    distance: Double, // meter 단위
-    duration: Int, // millisecond 단위
+fun RouteSummaryView(   // 길찾기 후 Card 출력
+    distance: Double,
+    duration: Int,
     pathPoints: List<LatLng>,
     address: String?,
+    arrivalTime: LocalDateTime? = null,
     modifier: Modifier = Modifier
 ) {
-    val km = distance / 1000.0
-    val durationSecTotal = duration / 1000
-    val durationMin = durationSecTotal / 60
-    val durationSec = durationSecTotal % 60
+    val km = distance / 1000.0  // 거리
+    val durationHour = duration / 3600  // 시
+    val durationMin = (duration % 3600) / 60    // 분
+
+    // 현재 시간 가져오는 함수
+    fun formatTimes(duration: Int): Pair<String, String> {
+        val zoneId = ZoneId.of("Asia/Seoul")
+        val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+
+        val nowZoned = ZonedDateTime.now(zoneId)    // 현재 시간
+        val arrivalZoned = nowZoned.plusSeconds(duration.toLong())  // 예상 도착 시간
+
+        val nowStr = nowZoned.format(timeFormatter)
+        val arrivalStr = arrivalZoned.format(timeFormatter)
+
+        return nowStr to arrivalStr
+    }
+
+    val (currentTimeStr, arrivalTimeStr) = formatTimes(duration)
 
     Card(
         modifier = modifier
@@ -64,11 +85,18 @@ fun RouteSummaryView(
                     Spacer(modifier = Modifier.height(8.dp))
                 }
                 Text("거리: %.2f km".format(km))
-                Text("예상 시간: ${durationMin}분 ${durationSec}초")
+                Text("예상 시간: ${durationHour}시간 ${durationMin}분")
+
+                Spacer(modifier = Modifier.height(8.dp))
+                Text("출발 시간: $currentTimeStr")
+                Text("예상 도착 시간: $arrivalTimeStr")
+
+//                arrivalTime?.let {
+//                    Spacer(modifier = Modifier.height(8.dp))
+//                    Text("예상 도착 시간: ${it.format(timeFormatter)}")
+//                }
             }
-
             Spacer(modifier = Modifier.width(12.dp))
-
             Box(
                 modifier = Modifier
                     .size(100.dp)
@@ -80,6 +108,7 @@ fun RouteSummaryView(
     }
 }
 
+// 미니맵 UI 컴포저블(Compose에서 네이버 지도 작게 출력)
 @Composable
 fun MiniRouteMapView(pathPoints: List<LatLng>) {
     val context = LocalContext.current
@@ -117,6 +146,7 @@ fun MiniRouteMapView(pathPoints: List<LatLng>) {
     )
 }
 
+// MapView 생명주기 관리
 @Composable
 fun rememberMapViewWithLifecycle(context: Context): MapView {
     val mapView = remember { MapView(context) }

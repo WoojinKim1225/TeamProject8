@@ -1,5 +1,7 @@
 package com.example.teamproject8.MYNfile.MapsFun
 
+import android.R.attr.apiKey
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.example.teamproject8.MYNfile.MapsPackage.NaverMapApiService
+import com.example.teamproject8.MYNfile.MapsPackage.GoogleDirectionsApiService
 import com.example.teamproject8.MYNfile.MapsPackage.Summary
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
@@ -25,21 +27,26 @@ import com.naver.maps.map.MapView
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.PathOverlay
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 @Composable
 fun NaverMapWithRouteView(
     modifier: Modifier = Modifier,
     current: LatLng,
     destination: LatLng,
-    clientId: String,
-    clientSecret: String,
+    googleApiKey: String,
+    mode: String = "driving",
+    departureTime: String = "now",
     onSummaryReady: (Summary) -> Unit,
     onPathPointsReady: (List<LatLng>) -> Unit
 ) {
     val context = LocalContext.current
-
     val mapView = remember { MapView(context) }
     var naverMap by remember { mutableStateOf<NaverMap?>(null) }
     var pathOverlay by remember { mutableStateOf<PathOverlay?>(null) }
@@ -47,43 +54,58 @@ fun NaverMapWithRouteView(
     var pathPoints by remember { mutableStateOf<List<LatLng>>(emptyList()) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
-    val retrofit = remember {
-        Retrofit.Builder()
-            .baseUrl("https://maps.apigw.ntruss.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
-    val service = remember { retrofit.create(NaverMapApiService::class.java) }
-
-    LaunchedEffect(current, destination) {
+    LaunchedEffect(current, destination, mode, departureTime, googleApiKey) { // Added googleApiKey to LaunchedEffect dependencies
         try {
-            val startStr = "${current.longitude},${current.latitude}"
-            val goalStr = "${destination.longitude},${destination.latitude}"
+            val origin = "${current.latitude},${current.longitude}"
+            val dest = "${destination.latitude},${destination.longitude}"
 
-            val response = service.getRoute(
-                clientId = clientId,
-                clientSecret = clientSecret,
-                start = startStr,
-                goal = goalStr
-            )
+            val retrofit = Retrofit.Builder()
+                .baseUrl("https://maps.googleapis.com/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
 
-            val coords = mutableListOf<LatLng>()
-            val traoptimal = response.route?.traoptimal?.firstOrNull()
+            val service = retrofit.create(GoogleDirectionsApiService::class.java)
 
-            traoptimal?.path?.let { pathList ->
-                for (point in pathList) {
-                    coords.add(LatLng(point[1], point[0]))
-                }
+            val response = withContext(Dispatchers.IO) {
+                service.getDirections(
+                    origin = origin,
+                    destination = dest,
+                    mode = "transit",    // mode,
+                    departureTime = departureTime,
+                    apiKey = googleApiKey
+                )
             }
-            pathPoints = coords
-            onPathPointsReady(coords) // 여기서 콜백 호출
 
-            traoptimal?.summary?.let { summary ->
-                onSummaryReady(summary)
+            val route = response.routes.firstOrNull()
+            if (route != null) {
+                val decodedPath = decodePolyline(route.overview_polyline.points)
+                pathPoints = decodedPath
+                onPathPointsReady(decodedPath)
+
+                val leg = route.legs.firstOrNull()
+                leg?.let {
+                    val summary = Summary(
+                        distance = it.distance.value,
+                        duration = it.duration.value
+                    )
+
+                    val departureEpoch = departureTime.toLongOrNull() ?: System.currentTimeMillis() / 1000
+                    val arrivalEpoch = departureEpoch + it.duration.value
+
+                    val arrivalTime = LocalDateTime.ofInstant(
+                        Instant.ofEpochSecond(arrivalEpoch),
+                        ZoneId.systemDefault() // 기기 설정에 맞게 시간대 조정
+                    )
+
+                    onSummaryReady(summary.copy(arrivalTime = arrivalTime))
+                }
+            } else {
+                errorMessage = "경로를 찾을 수 없습니다."
             }
 
         } catch (e: Exception) {
-            // error handling (생략)
+            errorMessage = "오류 발생: ${e.message}"
+            Log.e("GoogleRoute", "API Error", e)
         }
     }
 
@@ -135,4 +157,40 @@ fun NaverMapWithRouteView(
             )
         }
     }
+}
+
+// Google Polyline decoding
+fun decodePolyline(encoded: String): List<LatLng> {
+    val poly = ArrayList<LatLng>()
+    var index = 0
+    val len = encoded.length
+    var lat = 0
+    var lng = 0
+
+    while (index < len) {
+        var b: Int
+        var shift = 0
+        var result = 0
+        do {
+            b = encoded[index++].code - 63
+            result = result or ((b and 0x1f) shl shift)
+            shift += 5
+        } while (b >= 0x20)
+        val dlat = if ((result and 1) != 0) (result shr 1).inv() else result shr 1
+        lat += dlat
+
+        shift = 0
+        result = 0
+        do {
+            b = encoded[index++].code - 63
+            result = result or ((b and 0x1f) shl shift)
+            shift += 5
+        } while (b >= 0x20)
+        val dlng = if ((result and 1) != 0) (result shr 1).inv() else result shr 1
+        lng += dlng
+
+        poly.add(LatLng(lat / 1E5, lng / 1E5))
+    }
+
+    return poly
 }

@@ -43,7 +43,8 @@ import com.naver.maps.geometry.LatLng
 fun NaverMapScreen(
     modifier: Modifier = Modifier,
     clientId: String,
-    clientSecret: String
+    clientSecret: String,
+    googleApiKey: String
 ) {
     val permissionState = rememberMultiplePermissionsState(
         permissions = listOf(
@@ -80,7 +81,7 @@ fun NaverMapScreen(
         }
 
         currentLocation != null -> {
-            Box(modifier.fillMaxSize()) {
+            Box(modifier = Modifier.fillMaxSize()) {
                 if (destination == null) {
                     // 목적지 선택 UI, key를 통해 재초기화 유도
                     key(destinationKey) {
@@ -99,8 +100,9 @@ fun NaverMapScreen(
                             modifier = Modifier.fillMaxSize(),
                             current = currentLocation,
                             destination = destination!!,
-                            clientId = clientId,
-                            clientSecret = clientSecret,
+                            googleApiKey = googleApiKey, // Pass the googleApiKey here
+                            mode = "driving",
+                            departureTime = "now",
                             onSummaryReady = { summary = it },
                             onPathPointsReady = { pathPoints = it }
                         )
@@ -131,6 +133,7 @@ fun NaverMapScreen(
                         duration = s.duration,
                         pathPoints = pathPoints,
                         address = destinationAddress,
+                        arrivalTime = s.arrivalTime,
                         modifier = Modifier.align(Alignment.BottomCenter)
                     )
                 }
@@ -175,4 +178,3 @@ fun rememberCurrentLocation(): LatLng? {
 
     return locationState.value
 }
-

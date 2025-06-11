@@ -16,7 +16,8 @@ class MainActivity : ComponentActivity() {
             TeamProject11Theme {
                 NaverMapScreen(
                     clientId = BuildConfig.NAVER_CLIENT_ID,
-                    clientSecret = BuildConfig.NAVER_CLIENT_SECRET
+                    clientSecret = BuildConfig.NAVER_CLIENT_SECRET,
+                    googleApiKey = "AIzaSyBi_VF28eGMVNGyG6gdIW_k_vfLyDmibd4"
                 )
             }
         }
