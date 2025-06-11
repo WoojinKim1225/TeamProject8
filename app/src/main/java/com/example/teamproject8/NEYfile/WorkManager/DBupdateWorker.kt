@@ -8,6 +8,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.teamproject8.MainActivity
+import com.example.teamproject8.WJKfile.RoomDB.NavigationDatabase
 import com.example.week13.makeNotification
 
 class DBupdateWorker(context: Context, params:WorkerParameters): CoroutineWorker(context, params) {      //DBUPdate 관련 함수
@@ -19,9 +20,15 @@ class DBupdateWorker(context: Context, params:WorkerParameters): CoroutineWorker
         }
         //tag 만들기
         val tag:String = ""
-        //item
+        //item 가져오기
+        val db = NavigationDatabase.getDBInstance(applicationContext)
+        val dao = db.getItemDao()
 
-
+        val item = dao.GetItemById(item_id)
+        if (item != null) {
+            // 예: title을 "수정됨"으로 변경
+            dao.UpdateItem(item)
+        }
 
 
         //new Notify
