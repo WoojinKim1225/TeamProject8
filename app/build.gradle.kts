@@ -28,6 +28,21 @@ android {
             "NAVER_CLIENT_SECRET",
             "\"${project.findProperty("NAVER_CLIENT_SECRET")}\""
         )
+        buildConfigField(
+            "String",
+            "NAVER_SEARCH_CLIENT_ID",
+            "\"${project.findProperty("NAVER_SEARCH_CLIENT_ID")}\""
+        )
+        buildConfigField(
+            "String",
+            "NAVER_SEARCH_CLIENT_SECRET",
+            "\"${project.findProperty("NAVER_SEARCH_CLIENT_SECRET")}\""
+        )
+        buildConfigField(
+            "String",
+            "GOOGLE_API_KEY",
+            "\"${project.findProperty("GOOGLE_API_KEY")}\""
+        )
     }
 
     buildTypes {

@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.example.teamproject8.MYNfile.MapsPackage.PlaceResult
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.NaverMap
@@ -44,7 +45,51 @@ fun DestinationSelector(
     currentLocation: LatLng,
     clientId: String,
     clientSecret: String,
-    onDestinationSelected: (LatLng, String?) -> Unit
+    searchId: String,
+    searchSecret: String,
+    onPlacesSelected: (LatLng, String?, LatLng, String?) -> Unit
+) {
+    var currentStep by remember { mutableStateOf(0) } // 0: origin, 1: destination
+    var origin by remember { mutableStateOf<LatLng?>(null) }
+    var originName by remember { mutableStateOf<String?>(null) }
+
+    Column(modifier = modifier.fillMaxSize()) {
+        Text(
+            text = if (currentStep == 0) "출발지 검색" else "도착지 검색",
+            modifier = Modifier.padding(8.dp)
+        )
+
+        PlaceSearchMap(
+            currentLocation = currentLocation,
+            clientId = clientId,
+            clientSecret = clientSecret,
+            searchId = searchId,
+            searchSecret = searchSecret,
+            hint = if (currentStep == 0) "출발지 검색" else "도착지 검색",
+            onSelected = { latLng, name ->
+                if (currentStep == 0) {
+                    origin = latLng
+                    originName = name
+                    currentStep = 1
+                } else {
+                    if (origin != null) {
+                        onPlacesSelected(origin!!, originName, latLng, name)
+                    }
+                }
+            }
+        )
+    }
+}
+
+@Composable
+fun PlaceSearchMap(
+    currentLocation: LatLng,
+    clientId: String,
+    clientSecret: String,
+    searchId: String,
+    searchSecret: String,
+    hint: String,
+    onSelected: (LatLng, String?) -> Unit
 ) {
     val context = LocalContext.current
     val mapView = rememberMapViewWithLifecycle(context)
@@ -53,97 +98,71 @@ fun DestinationSelector(
     var searchResults by remember { mutableStateOf<List<PlaceResult>>(emptyList()) }
     val coroutineScope = rememberCoroutineScope()
 
-    Box(modifier = modifier.fillMaxSize()) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            // 🔍 검색 UI
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                TextField(
-                    value = query,
-                    onValueChange = { query = it },
-                    placeholder = { Text("목적지 검색") },
-                    modifier = Modifier.weight(1f)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Button(onClick = {
-                    coroutineScope.launch {
-                        searchResults = searchPlaces(query, clientId, clientSecret)
-                    }
-                }) {
-                    Text("검색")
-                }
-            }
-
-            // 🔍 검색 결과
-            LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                if (searchResults.isEmpty() && query.isNotBlank()) {
-                    item {
-                        Text(
-                            text = "결과 없음",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
-                        )
-                    }
-                } else {
-                    items(searchResults) { item ->
-                        Text(
-                            text = "${item.name}\n${item.roadAddress ?: item.address ?: "주소 정보 없음"}",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    onDestinationSelected(item.location, item.name)
-                                    query = ""
-                                    searchResults = emptyList()
-                                }
-                                .padding(8.dp)
-                        )
-                    }
-                }
-            }
-
-            // 🗺️ 지도 출력
-            AndroidView(
-                factory = {
-                    mapView.apply {
-                        getMapAsync { map ->
-                            naverMap = map
-
-                            Marker().apply {
-                                position = currentLocation
-                                captionText = "현재 위치"
-                                setMap(map)
-                            }
-
-                            map.moveCamera(CameraUpdate.scrollTo(currentLocation))
-
-                            map.setOnMapLongClickListener { _, latLng ->
-                                coroutineScope.launch {
-                                    val address = reverseGeocode(latLng, clientId, clientSecret)
-                                    onDestinationSelected(latLng, address)
-                                }
-                            }
-                        }
-                    }
-                },
+    Column(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TextField(
+                value = query,
+                onValueChange = { query = it },
+                placeholder = { Text(hint) },
                 modifier = Modifier.weight(1f)
             )
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(onClick = {
+                coroutineScope.launch {
+                    searchResults = searchPlaces(query, searchId, searchSecret)
+                }
+            }) {
+                Text("검색")
+            }
         }
+
+        LazyColumn(modifier = Modifier.fillMaxWidth()) {
+            if (searchResults.isEmpty() && query.isNotBlank()) {
+                item {
+                    Text("검색 결과 없음", modifier = Modifier.padding(16.dp))
+                }
+            } else {
+                items(searchResults) { item ->
+                    Text(
+                        text = "${item.name}\n${item.roadAddress ?: item.address ?: "주소 없음"}",
+                        modifier = Modifier.fillMaxWidth().clickable {
+                            onSelected(item.location, item.name)
+                            query = ""
+                            searchResults = emptyList()
+                        }.padding(8.dp)
+                    )
+                }
+            }
+        }
+
+        AndroidView(factory = {
+            mapView.apply {
+                getMapAsync { map ->
+                    naverMap = map
+
+                    Marker().apply {
+                        position = currentLocation
+                        captionText = "현재 위치"
+                        setMap(map)
+                    }
+                    map.moveCamera(CameraUpdate.scrollTo(currentLocation))
+
+                    map.setOnMapLongClickListener { _, latLng ->
+                        coroutineScope.launch {
+                            val address = reverseGeocode(latLng, clientId, clientSecret)
+                            onSelected(latLng, address)
+                        }
+                    }
+                }
+            }
+        }, modifier = Modifier.weight(1f))
     }
 }
 
-data class PlaceResult(
-    val name: String,
-    val location: LatLng,
-    val address: String?,
-    val roadAddress: String?
-)
-
-suspend fun searchPlaces(query: String, clientId: String, clientSecret: String): List<PlaceResult> {
+suspend fun searchPlaces(query: String, searchId: String, searchSecret: String): List<PlaceResult> {
     return withContext(Dispatchers.IO) {
         try {
             val encodedQuery = URLEncoder.encode(query, "UTF-8")
@@ -152,8 +171,8 @@ suspend fun searchPlaces(query: String, clientId: String, clientSecret: String):
 
             val request = Request.Builder()
                 .url(url)
-                .addHeader("X-Naver-Client-Id", "9ExLakbVtELjLL0YSKDm")
-                .addHeader("X-Naver-Client-Secret", "CKz2vb03xe")
+                .addHeader("X-Naver-Client-Id", searchId)
+                .addHeader("X-Naver-Client-Secret", searchSecret)
                 .addHeader("Content-Type", "application/json")
                 .build()
 

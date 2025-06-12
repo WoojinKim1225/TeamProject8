@@ -41,8 +41,8 @@ fun NaverMapWithRouteView(
     current: LatLng,
     destination: LatLng,
     googleApiKey: String,
-    mode: String = "driving",
-    departureTime: String = "now",
+    mode: String,
+    departureTime: String,
     onSummaryReady: (Summary) -> Unit,
     onPathPointsReady: (List<LatLng>) -> Unit
 ) {
@@ -86,18 +86,21 @@ fun NaverMapWithRouteView(
                 leg?.let {
                     val summary = Summary(
                         distance = it.distance.value,
-                        duration = it.duration.value
+                        duration = it.duration.value,
+                        departureTime = it.departure_time?.let { time ->
+                            LocalDateTime.ofInstant(
+                                Instant.ofEpochSecond(time.value),
+                                ZoneId.of(time.time_zone)
+                            )
+                        },
+                        arrivalTime = it.arrival_time?.let { time ->
+                            LocalDateTime.ofInstant(
+                                Instant.ofEpochSecond(time.value),
+                                ZoneId.of(time.time_zone)
+                            )
+                        }
                     )
-
-                    val departureEpoch = departureTime.toLongOrNull() ?: System.currentTimeMillis() / 1000
-                    val arrivalEpoch = departureEpoch + it.duration.value
-
-                    val arrivalTime = LocalDateTime.ofInstant(
-                        Instant.ofEpochSecond(arrivalEpoch),
-                        ZoneId.systemDefault() // 기기 설정에 맞게 시간대 조정
-                    )
-
-                    onSummaryReady(summary.copy(arrivalTime = arrivalTime))
+                    onSummaryReady(summary)
                 }
             } else {
                 errorMessage = "경로를 찾을 수 없습니다."

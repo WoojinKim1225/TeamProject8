@@ -2,7 +2,6 @@ package com.example.teamproject8.MYNfile.MapsFun
 
 import android.content.Context
 import android.graphics.Color
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,33 +40,24 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun RouteSummaryView(   // 길찾기 후 Card 출력
-    distance: Double,
-    duration: Int,
-    pathPoints: List<LatLng>,
-    address: String?,
-    arrivalTime: LocalDateTime? = null,
+fun RouteSummaryView(
+    distance: Double,   // 총거리
+    duration: Int,      // 길찾기 소요 시간
+    pathPoints: List<LatLng>,   // 경로(위도 경도의 List 형태)
+    mode: String,       // 교통수단(대중교통, 자동차, 자전거, 걷기)
+    startName: String,  // 출발지
+    endName: String,    // 도착지
+    startLatLng: LatLng,    // 시작 좌표(위도, 경도)
+    endLatLng: LatLng,      // 도착 좌표(위도, 경도)
+    departureTime: LocalDateTime? = null,   // 출발 시간
+    arrivalTime: LocalDateTime? = null,     // 도착 시간
     modifier: Modifier = Modifier
 ) {
-    val km = distance / 1000.0  // 거리
-    val durationHour = duration / 3600  // 시
-    val durationMin = (duration % 3600) / 60    // 분
+    val km = distance / 1000.0
+    val durationHour = duration / 3600
+    val durationMin = (duration % 3600) / 60
 
-    // 현재 시간 가져오는 함수
-    fun formatTimes(duration: Int): Pair<String, String> {
-        val zoneId = ZoneId.of("Asia/Seoul")
-        val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-
-        val nowZoned = ZonedDateTime.now(zoneId)    // 현재 시간
-        val arrivalZoned = nowZoned.plusSeconds(duration.toLong())  // 예상 도착 시간
-
-        val nowStr = nowZoned.format(timeFormatter)
-        val arrivalStr = arrivalZoned.format(timeFormatter)
-
-        return nowStr to arrivalStr
-    }
-
-    val (currentTimeStr, arrivalTimeStr) = formatTimes(duration)
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
     Card(
         modifier = modifier
@@ -79,29 +69,54 @@ fun RouteSummaryView(   // 길찾기 후 Card 출력
         Row(modifier = Modifier.padding(16.dp)) {
             Column(modifier = Modifier.weight(1f)) {
                 Text("경로 요약 정보", style = MaterialTheme.typography.titleMedium)
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // 출발지 및 도착지 이름
+                Text("출발지: ${startName.ifBlank { "현재 위치" }}")
+                Text("도착지: ${endName}")
                 Spacer(modifier = Modifier.height(8.dp))
-                address?.let {
-                    Text("목적지 주소: $it")
-                    Spacer(modifier = Modifier.height(8.dp))
+
+                // 시작/도착 좌표
+                Text("시작 좌표: ${"%.6f, %.6f".format(startLatLng.latitude, startLatLng.longitude)}")
+                Text("도착 좌표: ${"%.6f, %.6f".format(endLatLng.latitude, endLatLng.longitude)}")
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // 교통 수단 및 거리 및 시간
+                when (mode) {
+                    "transit" -> Text("교통 수단: 대중교통")
+                    "driving" -> Text("교통 수단: 자동차")
+                    "bicycling" -> Text("교통 수단: 자전거")
+                    "walking" -> Text("교통 수단: 걷기")
                 }
                 Text("거리: %.2f km".format(km))
-                Text("예상 시간: ${durationHour}시간 ${durationMin}분")
+                Text("예상 소요 시간: ${durationHour}시간 ${durationMin}분")
 
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("출발 시간: $currentTimeStr")
-                Text("예상 도착 시간: $arrivalTimeStr")
 
-//                arrivalTime?.let {
-//                    Spacer(modifier = Modifier.height(8.dp))
-//                    Text("예상 도착 시간: ${it.format(timeFormatter)}")
-//                }
+                // 출발 및 도착 시간
+                departureTime?.let {
+                    Text("출발 시간: ${it.format(formatter)}")
+                } ?: run {
+                    val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
+                    Text("출발 시간: ${now.format(formatter)}")
+                }
+
+                arrivalTime?.let {
+                    Text("도착 시간: ${it.format(formatter)}")
+                } ?: run {
+                    val arrival = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).plusSeconds(duration.toLong())
+                    Text("도착 시간: ${arrival.format(formatter)}")
+                }
             }
+
             Spacer(modifier = Modifier.width(12.dp))
+
             Box(
                 modifier = Modifier
                     .size(100.dp)
                     .aspectRatio(1f)
             ) {
+                // 경로가 있는 미니맵 띄우고 싶을 때
                 MiniRouteMapView(pathPoints = pathPoints)
             }
         }

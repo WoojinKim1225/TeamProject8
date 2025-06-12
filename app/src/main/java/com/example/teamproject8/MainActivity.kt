@@ -17,7 +17,9 @@ class MainActivity : ComponentActivity() {
                 NaverMapScreen(
                     clientId = BuildConfig.NAVER_CLIENT_ID,
                     clientSecret = BuildConfig.NAVER_CLIENT_SECRET,
-                    googleApiKey = "AIzaSyBi_VF28eGMVNGyG6gdIW_k_vfLyDmibd4"
+                    searchId = BuildConfig.NAVER_SEARCH_CLIENT_ID,
+                    searchSecret = BuildConfig.NAVER_SEARCH_CLIENT_SECRET,
+                    googleApiKey = BuildConfig.GOOGLE_API_KEY
                 )
             }
         }
