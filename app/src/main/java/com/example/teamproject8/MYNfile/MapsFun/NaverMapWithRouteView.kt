@@ -54,7 +54,7 @@ fun NaverMapWithRouteView(
     var pathPoints by remember { mutableStateOf<List<LatLng>>(emptyList()) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(current, destination, mode, departureTime, googleApiKey) { // Added googleApiKey to LaunchedEffect dependencies
+    LaunchedEffect(current, destination, mode, departureTime, googleApiKey) {
         try {
             val origin = "${current.latitude},${current.longitude}"
             val dest = "${destination.latitude},${destination.longitude}"

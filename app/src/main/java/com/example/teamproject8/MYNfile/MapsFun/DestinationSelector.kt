@@ -2,7 +2,6 @@ package com.example.teamproject8.MYNfile.MapsFun
 
 import android.util.Log
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -42,23 +41,19 @@ import java.net.URLEncoder
 @Composable
 fun DestinationSelector(
     modifier: Modifier = Modifier,
-    currentLocation: LatLng,
+    currentLocation: LatLng,    // 현재 위치
     clientId: String,
     clientSecret: String,
     searchId: String,
     searchSecret: String,
-    onPlacesSelected: (LatLng, String?, LatLng, String?) -> Unit
+    onPlacesSelected: (LatLng, String?, LatLng, String?) -> Unit    // 출발지 및 목적지 선택 후 콜백
 ) {
-    var currentStep by remember { mutableStateOf(0) } // 0: origin, 1: destination
+    var currentStep by remember { mutableStateOf(0) } // 0: 출발지 선택, 1: 목적지 선택
     var origin by remember { mutableStateOf<LatLng?>(null) }
     var originName by remember { mutableStateOf<String?>(null) }
 
     Column(modifier = modifier.fillMaxSize()) {
-        Text(
-            text = if (currentStep == 0) "출발지 검색" else "도착지 검색",
-            modifier = Modifier.padding(8.dp)
-        )
-
+        // 검색 및 지도 출력
         PlaceSearchMap(
             currentLocation = currentLocation,
             clientId = clientId,
@@ -67,7 +62,7 @@ fun DestinationSelector(
             searchSecret = searchSecret,
             hint = if (currentStep == 0) "출발지 검색" else "도착지 검색",
             onSelected = { latLng, name ->
-                if (currentStep == 0) {
+                if (currentStep == 0) { // 출발지 선택 완료
                     origin = latLng
                     originName = name
                     currentStep = 1
@@ -88,14 +83,14 @@ fun PlaceSearchMap(
     clientSecret: String,
     searchId: String,
     searchSecret: String,
-    hint: String,
-    onSelected: (LatLng, String?) -> Unit
+    hint: String,   // 출발지 검색 or 목적지 검색
+    onSelected: (LatLng, String?) -> Unit   // 위치 선택 후 콜백 호출
 ) {
     val context = LocalContext.current
     val mapView = rememberMapViewWithLifecycle(context)
     var naverMap by remember { mutableStateOf<NaverMap?>(null) }
-    var query by remember { mutableStateOf("") }
-    var searchResults by remember { mutableStateOf<List<PlaceResult>>(emptyList()) }
+    var query by remember { mutableStateOf("") }    // 검색어
+    var searchResults by remember { mutableStateOf<List<PlaceResult>>(emptyList()) }    // 검색 결과
     val coroutineScope = rememberCoroutineScope()
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -106,12 +101,13 @@ fun PlaceSearchMap(
             TextField(
                 value = query,
                 onValueChange = { query = it },
-                placeholder = { Text(hint) },
+                placeholder = { Text(hint) },   // 출발지 검색 or 목적지 검색
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
             Button(onClick = {
                 coroutineScope.launch {
+                    // 검색 버튼 클릭 시, Naver Search API 호출
                     searchResults = searchPlaces(query, searchId, searchSecret)
                 }
             }) {
@@ -119,16 +115,19 @@ fun PlaceSearchMap(
             }
         }
 
+        // 결과 출력
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
             if (searchResults.isEmpty() && query.isNotBlank()) {
                 item {
                     Text("검색 결과 없음", modifier = Modifier.padding(16.dp))
                 }
             } else {
+                // 결과가 있으면 목록 표시
                 items(searchResults) { item ->
                     Text(
                         text = "${item.name}\n${item.roadAddress ?: item.address ?: "주소 없음"}",
                         modifier = Modifier.fillMaxWidth().clickable {
+                            // 목록들 중 택 1하여 선택
                             onSelected(item.location, item.name)
                             query = ""
                             searchResults = emptyList()
@@ -138,6 +137,7 @@ fun PlaceSearchMap(
             }
         }
 
+        // 지도 및 현재 위치 마커 출력
         AndroidView(factory = {
             mapView.apply {
                 getMapAsync { map ->
@@ -148,8 +148,10 @@ fun PlaceSearchMap(
                         captionText = "현재 위치"
                         setMap(map)
                     }
+                    // 카메라를 현재 위치로
                     map.moveCamera(CameraUpdate.scrollTo(currentLocation))
 
+                    // 검색 외에도, 지도 롱클릭 시 해당 위치 선택
                     map.setOnMapLongClickListener { _, latLng ->
                         coroutineScope.launch {
                             val address = reverseGeocode(latLng, clientId, clientSecret)
@@ -162,6 +164,7 @@ fun PlaceSearchMap(
     }
 }
 
+// Naver Search API
 suspend fun searchPlaces(query: String, searchId: String, searchSecret: String): List<PlaceResult> {
     return withContext(Dispatchers.IO) {
         try {
@@ -203,6 +206,7 @@ suspend fun searchPlaces(query: String, searchId: String, searchSecret: String):
     }
 }
 
+// Reverse Geocoding API(좌표 -> 주소 변환)
 suspend fun reverseGeocode(latLng: LatLng, clientId: String, clientSecret: String): String? {
     return withContext(Dispatchers.IO) {
         try {

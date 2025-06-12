@@ -53,9 +53,9 @@ fun RouteSummaryView(
     arrivalTime: LocalDateTime? = null,     // 도착 시간
     modifier: Modifier = Modifier
 ) {
-    val km = distance / 1000.0
-    val durationHour = duration / 3600
-    val durationMin = (duration % 3600) / 60
+    val km = distance / 1000.0                  // 총거리(km)
+    val durationHour = duration / 3600          // 소요 시간(시)
+    val durationMin = (duration % 3600) / 60    // 소요 시간(분)
 
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
@@ -90,10 +90,9 @@ fun RouteSummaryView(
                 }
                 Text("거리: %.2f km".format(km))
                 Text("예상 소요 시간: ${durationHour}시간 ${durationMin}분")
-
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // 출발 및 도착 시간
+                // 출발 시간
                 departureTime?.let {
                     Text("출발 시간: ${it.format(formatter)}")
                 } ?: run {
@@ -101,6 +100,7 @@ fun RouteSummaryView(
                     Text("출발 시간: ${now.format(formatter)}")
                 }
 
+                // 도착 시간
                 arrivalTime?.let {
                     Text("도착 시간: ${it.format(formatter)}")
                 } ?: run {
@@ -108,15 +108,15 @@ fun RouteSummaryView(
                     Text("도착 시간: ${arrival.format(formatter)}")
                 }
             }
-
             Spacer(modifier = Modifier.width(12.dp))
 
+            // 우측에 있는 미니맵 Box
             Box(
                 modifier = Modifier
                     .size(100.dp)
                     .aspectRatio(1f)
             ) {
-                // 경로가 있는 미니맵 띄우고 싶을 때
+                // 경로가 있는 미니맵 출력(인자로 경로 넘겨줌)
                 MiniRouteMapView(pathPoints = pathPoints)
             }
         }

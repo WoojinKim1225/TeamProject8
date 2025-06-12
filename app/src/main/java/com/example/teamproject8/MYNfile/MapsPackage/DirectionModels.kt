@@ -4,7 +4,6 @@ import com.naver.maps.geometry.LatLng
 import java.time.LocalDateTime
 
 data class GoogleDirectionsResponse(
-    val status: String,
     val routes: List<GoogleRoute>
 )
 

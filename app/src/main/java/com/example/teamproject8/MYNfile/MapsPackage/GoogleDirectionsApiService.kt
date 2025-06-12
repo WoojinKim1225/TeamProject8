@@ -8,7 +8,7 @@ interface GoogleDirectionsApiService {
     suspend fun getDirections(
         @Query("origin") origin: String,
         @Query("destination") destination: String,
-        @Query("mode") mode: String = "driving", // driving, walking, bicycling, transit
+        @Query("mode") mode: String = "transit", // driving, walking, bicycling, transit
         @Query("departure_time") departureTime: String = "now", // or Unix timestamp
         @Query("key") apiKey: String
     ): GoogleDirectionsResponse
