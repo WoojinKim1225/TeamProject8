@@ -15,5 +15,7 @@ data class NavigationEntity(
     var icon: Int,
     var route: String,
     var departureTime: Int,
-    var arrivalTime: Int
+    var arrivalTime: Int,
+    var origin: String,
+    var destination: String
 )

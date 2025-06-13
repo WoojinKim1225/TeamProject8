@@ -2,25 +2,25 @@ package com.example.teamproject8.WJKfile.model
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Menu
+import androidx.compose.material.icons.outlined.Place
 
 object NavBarItems{
     val BarItems = listOf(
         BarItem(
-            title = Routes.Home.route,
-            selectIcon = Icons.Default.Home,
-            onSelectedIcon = Icons.Outlined.Home,
-            route = Routes.Home.route
+            title = Routes.Map.route,
+            selectIcon = Icons.Default.Place,
+            onSelectedIcon = Icons.Outlined.Place,
+            route = Routes.Map.route
         ),
         BarItem(
-            title = Routes.Contacts.route,
-            selectIcon = Icons.Default.Person,
-            onSelectedIcon = Icons.Outlined.Person,
-            route = Routes.Contacts.route
+            title = Routes.Saved.route,
+            selectIcon = Icons.Default.Menu,
+            onSelectedIcon = Icons.Outlined.Menu,
+            route = Routes.Saved.route
         ),
         BarItem(
             title = Routes.Favorites.route,

@@ -1,7 +1,7 @@
 package com.example.teamproject8.WJKfile.model
 
 sealed class Routes (val route: String) {
-    object Home : Routes("Home")
-    object Contacts : Routes("Contacts")
+    object Map : Routes("Map")
+    object Saved : Routes("Saved")
     object Favorites : Routes("Favorites")
 }

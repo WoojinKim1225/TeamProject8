@@ -64,4 +64,10 @@ dependencies {
     annotationProcessor(libs.androidx.room.compiler)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    val room_version = "2.7.1" // 최신 버전으로 확인하세요
+
+    implementation("androidx.room:room-runtime:$room_version")
+    implementation("androidx.room:room-ktx:$room_version") // Kotlin 확장 및 Coroutines 지원 (권장)
+    ksp("androidx.room:room-compiler:$room_version") // KSP용 Room
 }

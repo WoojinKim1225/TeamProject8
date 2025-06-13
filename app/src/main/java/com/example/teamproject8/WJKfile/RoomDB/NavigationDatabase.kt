@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [NavigationEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 
@@ -20,10 +20,10 @@ abstract class NavigationDatabase : RoomDatabase() {
         fun getDBInstance(context: Context): NavigationDatabase {
             return DBInstance ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    NavigationDatabase::class.java,
-                    "itemdb"
-                ).build()
+                                context.applicationContext,
+                                NavigationDatabase::class.java,
+                                "itemdb"
+                            ).fallbackToDestructiveMigration(false).build()
                 DBInstance = instance
                 instance
             }
