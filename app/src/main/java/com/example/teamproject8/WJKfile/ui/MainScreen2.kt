@@ -19,6 +19,13 @@ import com.example.teamproject8.WJKfile.navigation.NavGraph
 fun MainScreen2(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     Scaffold(
+
+
+        topBar = {
+            TopAppBar(
+                title = { Text(text = "20000 홍길동") }
+            )
+        },
         bottomBar = {
             BottomNavigationBar(navController)
         }
