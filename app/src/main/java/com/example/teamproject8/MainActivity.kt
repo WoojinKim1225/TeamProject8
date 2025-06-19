@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             TeamProject11Theme {
 
-                /*NaverMapScreen(
+/*                NaverMapScreen(
 
                     // API 사용하는 Android package가 제한되어 있어서,
                     // API 사용할 때 카톡으로 패키지 이름 넘겨주시면 추가해드리겠습니다.

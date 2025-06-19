@@ -11,7 +11,7 @@ import com.example.teamproject8.WJKfile.RoomDB.Converters.LocalDateTimeConverter
 
 @Database(
     entities = [NavigationEntity::class],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 @TypeConverters(
