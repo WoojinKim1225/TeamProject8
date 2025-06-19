@@ -2,11 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-<<<<<<< HEAD
     id("com.google.devtools.ksp") version "2.1.21-2.0.1"
-=======
     alias(libs.plugins.secrets.gradle.plugin)
->>>>>>> origin/minyoung
 }
 
 android {
@@ -81,7 +78,6 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-<<<<<<< HEAD
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.navigation.common.android)
@@ -89,7 +85,6 @@ dependencies {
     implementation(libs.androidx.compose.navigation)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.work.runtime.ktx)
-=======
     implementation("com.naver.maps:map-sdk:3.21.0") // Naver Map SDK
     implementation("com.squareup.retrofit2:retrofit:2.9.0") // Retrofit for API
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
@@ -97,7 +92,6 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.0.1") // Gson
     implementation(libs.naver.map.compose)
     implementation(libs.accompanist.permissions)
->>>>>>> origin/minyoung
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -106,18 +100,15 @@ dependencies {
     annotationProcessor(libs.androidx.room.compiler)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-<<<<<<< HEAD
 
-    val room_version = "2.7.1" // 최신 버전으로 확인하세요
+    val room_version = "2.7.2" // 최신 버전으로 확인하세요
 
     implementation("androidx.room:room-runtime:$room_version")
     implementation("androidx.room:room-ktx:$room_version") // Kotlin 확장 및 Coroutines 지원 (권장)
     ksp("androidx.room:room-compiler:$room_version") // KSP용 Room
-=======
 }
 
 secrets {
     propertiesFileName = "secrets.properties"
     defaultPropertiesFileName = "local.defaults.properties"
->>>>>>> origin/minyoung
 }

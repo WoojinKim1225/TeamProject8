@@ -8,7 +8,6 @@ espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.9.0"
 activityCompose = "1.10.1"
 composeBom = "2024.09.00"
-<<<<<<< HEAD
 roomRuntime = "2.7.1"
 roomCompiler = "2.7.1"
 roomKtx = "2.7.1"
@@ -17,11 +16,9 @@ navigationRuntimeAndroid = "2.9.0"
 composeNavigation = "1.4.1"
 navigationCompose = "2.9.0"
 workRuntimeKtx = "2.10.1"
-=======
 naverMapCompose = "1.8.0"
 secretsGradlePlugin = "2.0.1"
 accompanistPermissions = "0.37.3"
->>>>>>> origin/minyoung
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -38,7 +35,6 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
-<<<<<<< HEAD
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
@@ -47,10 +43,8 @@ androidx-navigation-runtime-android = { group = "androidx.navigation", name = "n
 androidx-compose-navigation = { group = "androidx.wear.compose", name = "compose-navigation", version.ref = "composeNavigation" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
-=======
 naver-map-compose = { group = "io.github.fornewid", name = "naver-map-compose", version.ref = "naverMapCompose" }
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanistPermissions" }
->>>>>>> origin/minyoung
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
