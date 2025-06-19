@@ -27,6 +27,7 @@ data class NavigationEntity(
     var departureTime: LocalDateTime? = null,   //출발 시간
     var arrivalTime: LocalDateTime? = null,
     var icon: Int,
-    var route: String
+    var route: String,
+    var doWork: Boolean = false
 
 )

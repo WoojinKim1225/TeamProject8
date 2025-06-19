@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.teamproject8.NEYfile.AlarmUI.SavedUI
 import com.example.teamproject8.WJKfile.model.Routes
 import com.example.teamproject8.WJKfile.ui.Saved
 import com.example.teamproject8.WJKfile.ui.Favorites
@@ -19,7 +20,7 @@ fun NavGraph(navController: NavHostController) {
             Map()
         }
         composable(Routes.Saved.route){
-            Saved(navController)
+            SavedUI()
         }
         composable(Routes.Favorites.route){
             Favorites()

@@ -21,7 +21,23 @@ class NavigationDatabaseViewModel(private val navigationDao: NavigationDao) : Vi
     fun addSampleNavigationItems() {
         viewModelScope.launch {
             val sampleNavigationItems = listOf(
-                NavigationEntity(title = "Going To School", icon = R.drawable.baseline_location_pin_24, route = "Home", departureTime = 0, arrivalTime = 0, origin = "Home", destination = "School")
+                NavigationEntity(
+                    id = TODO(),
+                    title = TODO(),
+                    distance = TODO(),
+                    duration = TODO(),
+                    pathPoints = TODO(),
+                    mode = TODO(),
+                    origin = TODO(),
+                    destination = TODO(),
+                    startLatLng = TODO(),
+                    endLatLng = TODO(),
+                    alarmTime = TODO(),
+                    departureTime = TODO(),
+                    arrivalTime = TODO(),
+                    icon = TODO(),
+                    route = TODO()
+                )
 
             )
             navigationDao.InsertItems(sampleNavigationItems)

@@ -4,12 +4,15 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
 
 @Database(
     entities = [NavigationEntity::class],
     version = 2,
     exportSchema = false
 )
+@TypeConverters(NavigationTypeConverters::class)
 
 abstract class NavigationDatabase : RoomDatabase() {
     abstract fun getItemDao(): NavigationDao
