@@ -74,8 +74,8 @@ fun SavedItemUI(item: NavigationEntity, modifier: Modifier = Modifier) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End
             ) {
-                val title: String = ""
-                val message: String = ""
+                val title: String = "${item.origin} -> ${item.destination}"
+                val message: String = "${item.departureTime} 출발 시 ${item.arrivalTime}에 도착 예정입니다."
 
 
                 Button(onClick = {
@@ -89,13 +89,16 @@ fun SavedItemUI(item: NavigationEntity, modifier: Modifier = Modifier) {
                         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                     )
 
+                    item.alarmTime = item.departureTime!!.minusMinutes(60)
+
                     makeNotification(appcontext, title, message, item.id , pendingIntent)
-                    ScheduleRequest.DBWorkManager(appcontext, 1, item.arrivalTime!!, item.id,"")
-                    //departTime의 날짜, 시간, 분, 초, Item DB_ID, tag 추가 필요
+                    ScheduleRequest.DBWorkManager(appcontext, item.alarmTime!!, item.id, item.destination)
                 },
                     modifier = Modifier.padding(5.dp)) {
                     Text("Enabled")
                 }
+
+
             }
 
         }

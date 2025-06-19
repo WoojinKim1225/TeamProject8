@@ -18,8 +18,7 @@ class DBupdateWorker(context: Context, params:WorkerParameters): CoroutineWorker
         if(item_id == -1){
             return Result.failure()
         }
-        //tag 만들기
-        val tag:String = ""
+
         //item 가져오기
         val db = NavigationDatabase.getDBInstance(applicationContext)
         val dao = db.getItemDao()
@@ -33,6 +32,9 @@ class DBupdateWorker(context: Context, params:WorkerParameters): CoroutineWorker
         }else {
             return Result.failure()
         }
+
+        //tag 만들기
+        val tag:String = item.destination
 
         //new Notify
         val title: String = "${item.origin} -> ${item.destination}"
@@ -53,7 +55,7 @@ class DBupdateWorker(context: Context, params:WorkerParameters): CoroutineWorker
         val nextUpdateTime = item.alarmTime!!.plusMinutes(10)
 
         //ScheduleRequest
-        ScheduleRequest.DBWorkManager(workContext, 1, nextUpdateTime, item_id, tag)
+        ScheduleRequest.DBWorkManager(workContext, nextUpdateTime, item_id, tag)
 
         return Result.success()
     }

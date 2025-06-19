@@ -9,13 +9,13 @@ import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 object ScheduleRequest {
-    fun DBWorkManager(context: Context, day: Int, AlarmTime:LocalDateTime, item_id_value:Int, tag:String) {
+    fun DBWorkManager(context: Context, AlarmTime:LocalDateTime, item_id_value:Int, tag:String) {
         val curruntTime = Calendar.getInstance()
         val targetTime = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, AlarmTime.hour)
             set(Calendar.MINUTE, AlarmTime.minute)
             set(Calendar.SECOND, AlarmTime.second)
-            set(Calendar.DAY_OF_YEAR, day)
+            set(Calendar.DAY_OF_YEAR, AlarmTime.dayOfYear)
         }
 
         val delay = targetTime.timeInMillis - curruntTime.timeInMillis

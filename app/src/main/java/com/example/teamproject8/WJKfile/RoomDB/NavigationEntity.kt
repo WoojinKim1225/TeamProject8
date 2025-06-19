@@ -16,15 +16,15 @@ data class NavigationEntity(
     // 집, 회사 등 아이콘
     var distance:Double,
     var duration: Int,
-    var parhPoints: List<LatLng>,
+    var parhPoints: List<LatLng>,               //미니맵 제작 위한 리스트
     var mode:String,
     var origin: String,
     var destination: String,
     var startLatLng: LatLng,
     var endLatLng: LatLng,
 
-    var alarmTime:LocalDateTime? = null,
-    var departureTime: LocalDateTime? = null,
+    var alarmTime:LocalDateTime? = null,        //10분 단위 Update 반복을 위한 타이머
+    var departureTime: LocalDateTime? = null,   //출발 시간
     var arrivalTime: LocalDateTime? = null,
     var icon: Int,
     var route: String
