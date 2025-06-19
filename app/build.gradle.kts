@@ -106,6 +106,8 @@ dependencies {
     implementation("androidx.room:room-runtime:$room_version")
     implementation("androidx.room:room-ktx:$room_version") // Kotlin 확장 및 Coroutines 지원 (권장)
     ksp("androidx.room:room-compiler:$room_version") // KSP용 Room
+    implementation("androidx.room:room-ktx:$room_version")
+    implementation("com.google.code.gson:gson:2.10.1")
 }
 
 secrets {

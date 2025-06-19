@@ -5,10 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.teamproject8.R
 import com.example.teamproject8.WJKfile.RoomDB.NavigationDao
 import com.example.teamproject8.WJKfile.RoomDB.NavigationEntity
+import com.naver.maps.geometry.LatLng
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 class NavigationDatabaseViewModel(private val navigationDao: NavigationDao) : ViewModel() {
     val navigationItems:StateFlow<List<NavigationEntity>> = navigationDao.GetAllItems()
@@ -20,8 +22,26 @@ class NavigationDatabaseViewModel(private val navigationDao: NavigationDao) : Vi
 
     fun addSampleNavigationItems() {
         viewModelScope.launch {
+            val now = LocalDateTime.now()
+            val addedMinutes = now.plusMinutes(15)
+
             val sampleNavigationItems = listOf(
-                NavigationEntity(title = "Going To School", icon = R.drawable.baseline_location_pin_24, route = "Home", departureTime = 0, arrivalTime = 0, origin = "Home", destination = "School")
+                NavigationEntity(
+                    title = "Going To School",
+                    icon = R.drawable.baseline_location_pin_24,
+                    route = "Home",
+                    departureTime = now,
+                    arrivalTime = addedMinutes,
+                    origin = "Home",
+                    destination = "School",
+                    distance = 0.0,
+                    duration = 0,
+                    pathPoints = emptyList(),
+                    mode = "test",
+                    startLatLng = LatLng(0.0,0.0),
+                    endLatLng = LatLng(1.0,1.0),
+                    alarmTime = LocalDateTime.now(),
+                )
 
             )
             navigationDao.InsertItems(sampleNavigationItems)
