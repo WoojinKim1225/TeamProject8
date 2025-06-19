@@ -11,9 +11,15 @@ class LatLngListConverter {
 
     @TypeConverter
     fun toLatLngList(data: String): List<LatLng> {
-        return data.split("|").map {
-            val parts = it.split(",")
-            LatLng(parts[0].toDouble(), parts[1].toDouble())
-        }
+        if (data.isBlank()) return emptyList()
+
+        return data.split("|")
+            .filter { it.isNotBlank() && it.contains(",") }
+            .map {
+                val parts = it.split(",")
+                val lat = parts.getOrNull(0)?.toDoubleOrNull() ?: 0.0
+                val lng = parts.getOrNull(1)?.toDoubleOrNull() ?: 0.0
+                LatLng(lat, lng)
+            }
     }
 }
