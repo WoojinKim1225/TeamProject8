@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Looper
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -196,6 +197,8 @@ fun NaverMapScreen(
                 }
                 // 길찾기 후 경로 요약 정보 Card 출력
                 summary?.let { s ->
+                    Log.d("MyTag", s.toString())
+                    Log.d("MyTag2", pathPoints.toString())
                     RouteSummaryView(
                         distance = s.distance.toDouble(),
                         duration = s.duration,

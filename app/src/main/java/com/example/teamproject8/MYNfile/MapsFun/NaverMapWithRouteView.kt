@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.teamproject8.MYNfile.MapsPackage.GoogleDirectionsApiService
 import com.example.teamproject8.MYNfile.MapsPackage.Summary
+import com.example.teamproject8.WJKfile.transit.getArrivalTransitDirection
+import com.example.teamproject8.WJKfile.transit.getTransitDirection
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapView
@@ -66,7 +68,7 @@ fun NaverMapWithRouteView(
 
             val service = retrofit.create(GoogleDirectionsApiService::class.java)
 
-            val response = withContext(Dispatchers.IO) {
+/*            val response = withContext(Dispatchers.IO) {
                 service.getDirections(
                     origin = origin,
                     destination = dest,
@@ -74,7 +76,10 @@ fun NaverMapWithRouteView(
                     departureTime = departureTime,
                     apiKey = googleApiKey
                 )
-            }
+            }*/
+
+            val response = getArrivalTransitDirection(
+                service = service, origin = origin, dest, mode, departureTime, googleApiKey)
 
             val route = response.routes.firstOrNull()
             if (route != null) {

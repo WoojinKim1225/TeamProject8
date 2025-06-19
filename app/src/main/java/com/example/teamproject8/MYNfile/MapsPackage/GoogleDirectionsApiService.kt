@@ -12,4 +12,13 @@ interface GoogleDirectionsApiService {
         @Query("departure_time") departureTime: String = "now", // or Unix timestamp
         @Query("key") apiKey: String
     ): GoogleDirectionsResponse
+
+    @GET("maps/api/directions/json")
+    suspend fun getDirectionsAlt(
+        @Query("origin") origin: String,
+        @Query("destination") destination: String,
+        @Query("mode") mode: String = "transit", // driving, walking, bicycling, transit
+        @Query("arrival_time") arrivalTime: String = "now", // or Unix timestamp
+        @Query("key") apiKey: String
+    ): GoogleDirectionsResponse
 }
