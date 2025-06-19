@@ -16,7 +16,7 @@ data class NavigationEntity(
     // 집, 회사 등 아이콘
     var distance:Double,
     var duration: Int,
-    var parhPoints: List<LatLng>,               //미니맵 제작 위한 리스트
+    var pathPoints: List<LatLng>,               //미니맵 제작 위한 리스트
     var mode:String,
     var origin: String,
     var destination: String,

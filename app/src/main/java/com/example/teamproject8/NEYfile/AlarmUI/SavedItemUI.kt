@@ -77,7 +77,7 @@ fun SavedItemUI(item: NavigationEntity, modifier: Modifier = Modifier) {
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
-                MiniRouteMapView(item.parhPoints)
+                MiniRouteMapView(item.pathPoints)
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
