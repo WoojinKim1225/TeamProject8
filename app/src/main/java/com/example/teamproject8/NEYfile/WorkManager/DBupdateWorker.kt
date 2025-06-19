@@ -24,9 +24,12 @@ class DBupdateWorker(context: Context, params:WorkerParameters): CoroutineWorker
         val dao = db.getItemDao()
 
         val item = dao.GetItemById(item_id)
-        if (item != null) {
 
+        if (item != null) {
             //depatureTime 계산 로직
+
+
+            item.alarmTime = item.alarmTime!!.plusMinutes(10)       //다음 Update 10분 뒤
 
             dao.UpdateItem(item)
         }else {
@@ -34,7 +37,7 @@ class DBupdateWorker(context: Context, params:WorkerParameters): CoroutineWorker
         }
 
         //tag 만들기
-        val tag:String = item.destination
+        val tag:String = item.id.toString()
 
         //new Notify
         val title: String = "${item.origin} -> ${item.destination}"
@@ -52,11 +55,10 @@ class DBupdateWorker(context: Context, params:WorkerParameters): CoroutineWorker
         )
         makeNotification(applicationContext, "", "", item_id, pendingIntent)
 
-        val nextUpdateTime = item.alarmTime!!.plusMinutes(10)
-
-        //ScheduleRequest
-        ScheduleRequest.DBWorkManager(workContext, nextUpdateTime, item_id, tag)
-
+        if(item.alarmTime!! < item.departureTime) {
+            //ScheduleRequest
+            ScheduleRequest.DBWorkManager(workContext, item.alarmTime!!, item_id, tag)
+        }
         return Result.success()
     }
 }

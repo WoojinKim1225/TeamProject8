@@ -14,7 +14,6 @@ fun SavedUI(modifier: Modifier = Modifier, viewModel: NavigationDatabaseViewMode
 
     val SavedItemList by viewModel.navigationItems.collectAsState()
 
-    //DB에서 정보를 꺼내와서 List형태로 만들어야함.
     LazyColumn {
         items(SavedItemList){
             item ->
