@@ -40,7 +40,7 @@ class DBupdateWorker(context: Context, params:WorkerParameters): CoroutineWorker
 
         //UPDATE DB
         if (item != null) {
-            //depatureTime 계산 로직 필요
+            //item.depatureTime 계산 로직 필요
 
 
             item.alarmTime = item.alarmTime!!.plusMinutes(10)       //다음 Update 10분 뒤
@@ -69,6 +69,8 @@ class DBupdateWorker(context: Context, params:WorkerParameters): CoroutineWorker
         if(item.alarmTime!! < item.departureTime) {
             //ScheduleRequest
             ScheduleRequest.DBWorkManager(workContext, item.alarmTime!!, item_id, tag)
+        }else {
+            item.doWork = false
         }
         return Result.success()
     }

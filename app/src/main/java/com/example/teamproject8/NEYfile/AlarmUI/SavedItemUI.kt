@@ -2,15 +2,18 @@ package com.example.teamproject8.NEYfile.AlarmUI
 
 import android.app.PendingIntent
 import android.content.Intent
+import android.graphics.Color
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Switch
@@ -29,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import com.example.teamproject8.MYNfile.MapsFun.MiniRouteMapView
 import com.example.teamproject8.MYNfile.MapsFun.rememberMapViewWithLifecycle
 import com.example.teamproject8.MainActivity
@@ -36,6 +40,11 @@ import com.example.teamproject8.NEYfile.WorkManager.ScheduleRequest
 import com.example.teamproject8.WJKfile.RoomDB.NavigationDatabase
 import com.example.teamproject8.WJKfile.RoomDB.NavigationEntity
 import com.example.week13.makeNotification
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.geometry.LatLngBounds
+import com.naver.maps.map.CameraUpdate
+import com.naver.maps.map.NaverMap
+import com.naver.maps.map.overlay.PathOverlay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -52,6 +61,7 @@ fun SavedItemUI(item: NavigationEntity, modifier: Modifier = Modifier) {
     val coroutinescope = rememberCoroutineScope()
 
     var expanded by remember { mutableStateOf(false) }
+    var ischecked by remember { mutableStateOf(item.doWork)}
 
     Card(
         modifier = Modifier.clickable { expanded = !expanded }
@@ -77,7 +87,7 @@ fun SavedItemUI(item: NavigationEntity, modifier: Modifier = Modifier) {
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
-                MiniRouteMapView(item.pathPoints)
+                MiniRouteMapView2(item.pathPoints, modifier = Modifier.fillMaxWidth().height(120.dp))       //minimap 출력
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
@@ -97,70 +107,54 @@ fun SavedItemUI(item: NavigationEntity, modifier: Modifier = Modifier) {
                     val message: String =
                         "${item.departureTime} 출발 시 ${item.arrivalTime}에 도착 예정입니다."
 
-                    Button(     //알림 켜는 버튼
-                        onClick = {
-                            val intent = Intent(appcontext, MainActivity::class.java).apply {
-                                flags =
-                                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            }
-                            val pendingIntent = PendingIntent.getActivity(
-                                appcontext,
-                                0,
-                                intent,
-                                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                            )
-
-                            item.alarmTime = item.departureTime!!.minusMinutes(60)
-                            coroutinescope.launch {
-                                dao.UpdateItem(item)
-                            }
-
-                            ScheduleRequest.CancelWorkManager(
-                                context = context,
-                                tag = item.id.toString()
-                            )       //Workmanager 초기화
-                            makeNotification(appcontext, title, message, item.id, pendingIntent)
-                            ScheduleRequest.DBWorkManager(
-                                appcontext,
-                                item.alarmTime!!,
-                                item.id,
-                                item.id.toString()
-                            )
-                        },
-                        modifier = Modifier.padding(5.dp)
-                    ) {
-                        Text("Enabled")
+                    val intent = Intent(appcontext, MainActivity::class.java).apply {
+                        flags =
+                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     }
-                    Button(     //DB 제거 및 알림 취소 버튼
-                        onClick = {
-                            val intent = Intent(appcontext, MainActivity::class.java).apply {
-                                flags =
-                                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    val pendingIntent = PendingIntent.getActivity(
+                        appcontext,
+                        0,
+                        intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                    )
+
+                    Switch(
+                        checked = ischecked,
+                        onCheckedChange = {
+                            checked ->
+                            ischecked = checked
+                            item.doWork = checked
+
+                            if(ischecked == false){
+                                coroutinescope.launch {
+                                    dao.UpdateItem(item)
+                                }
+                                ScheduleRequest.CancelWorkManager(
+                                    context = context,
+                                    tag = item.id.toString()
+                                )       //Workmanager 동작 중지 명령
+                            }else {
+                                item.alarmTime = item.departureTime!!.minusMinutes(60)
+                                coroutinescope.launch {
+                                    dao.UpdateItem(item)
+                                }
+
+                                ScheduleRequest.CancelWorkManager(
+                                    context = context,
+                                    tag = item.id.toString()
+                                )       //Workmanager 초기화
+                                makeNotification(appcontext, title, message, item.id, pendingIntent)
+                                ScheduleRequest.DBWorkManager(
+                                    appcontext,
+                                    item.alarmTime!!,
+                                    item.id,
+                                    item.id.toString()
+                                )
                             }
-                            val pendingIntent = PendingIntent.getActivity(
-                                appcontext,
-                                0,
-                                intent,
-                                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                            )
-
-                            coroutinescope.launch {
-                                dao.DeleteItem(item)
-                            }       //DB 삭제
-
-                            ScheduleRequest.CancelWorkManager(
-                                context = context,
-                                tag = item.id.toString()
-                            )       //Workmanager 동작 중지 명령
                         },
-                        modifier = Modifier.padding(5.dp)
-                    ) {
-                        Text("Delete")
-                    }
-
-
+                        modifier = Modifier.size(20.dp)
+                    )
                 }
-
             }
         } else {
             Column {
@@ -195,8 +189,39 @@ fun SavedItemUI(item: NavigationEntity, modifier: Modifier = Modifier) {
     }
 }
 
-@Preview
 @Composable
-private fun SavedItemUI_prev() {
+fun MiniRouteMapView2(pathPoints: List<LatLng>, modifier: Modifier) {
+    val context = LocalContext.current
+    val mapView = rememberMapViewWithLifecycle(context)
+    var naverMap by remember { mutableStateOf<NaverMap?>(null) }
 
+    AndroidView(
+        factory = {
+            mapView.apply {
+                getMapAsync { map ->
+                    naverMap = map
+                    map.uiSettings.apply {
+                        isZoomControlEnabled = false
+                        isScrollGesturesEnabled = false
+                        isTiltGesturesEnabled = false
+                        isRotateGesturesEnabled = false
+                        isLocationButtonEnabled = false
+                    }
+
+                    if (pathPoints.isNotEmpty()) {
+                        PathOverlay().apply {
+                            coords = pathPoints
+                            color = Color.BLUE
+                            width = 8
+                            setMap(map)
+                        }
+
+                        val bounds = LatLngBounds.from(pathPoints.first(), pathPoints.last())
+                        map.moveCamera(CameraUpdate.fitBounds(bounds, 40))
+                    }
+                }
+            }
+        },
+        modifier = modifier
+    )
 }
