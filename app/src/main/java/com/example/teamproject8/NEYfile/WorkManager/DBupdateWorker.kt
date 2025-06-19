@@ -26,12 +26,18 @@ class DBupdateWorker(context: Context, params:WorkerParameters): CoroutineWorker
 
         val item = dao.GetItemById(item_id)
         if (item != null) {
-            // 예: title을 "수정됨"으로 변경
+
+            //depatureTime 계산 로직
+
             dao.UpdateItem(item)
+        }else {
+            return Result.failure()
         }
 
-
         //new Notify
+        val title: String = "${item.origin} -> ${item.destination}"
+        val message: String = "${item.departureTime} 출발 시 ${item.arrivalTime}에 도착 예정입니다."
+
         val workContext = applicationContext
         val intent = Intent(applicationContext, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -44,8 +50,10 @@ class DBupdateWorker(context: Context, params:WorkerParameters): CoroutineWorker
         )
         makeNotification(applicationContext, "", "", item_id, pendingIntent)
 
+        val nextUpdateTime = item.alarmTime!!.plusMinutes(10)
+
         //ScheduleRequest
-        ScheduleRequest.DBWorkManager(workContext, 1, 1, 1, 1, item_id, tag)
+        ScheduleRequest.DBWorkManager(workContext, 1, nextUpdateTime, item_id, tag)
 
         return Result.success()
     }
