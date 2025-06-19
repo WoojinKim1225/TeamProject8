@@ -4,6 +4,7 @@ package com.example.teamproject8.NEYfile.WorkManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.teamproject8.MainActivity
@@ -71,6 +72,8 @@ class DBupdateWorker(context: Context, params:WorkerParameters): CoroutineWorker
         }else {
             item.doWork = false
         }
+
+        Log.d("WorkManager1", "$item_id Worker work")
         return Result.success()
     }
 }
