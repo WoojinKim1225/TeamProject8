@@ -3,14 +3,13 @@ package com.example.teamproject8
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-<<<<<<< HEAD
 
 import com.example.teamproject8.WJKfile.ui.MainScreen2
-=======
+
 import androidx.activity.enableEdgeToEdge
 
 import com.example.teamproject8.MYNfile.NaverMapScreen
->>>>>>> origin/minyoung
+
 import com.example.teamproject8.ui.theme.TeamProject11Theme
 
 class MainActivity : ComponentActivity() {
@@ -18,13 +17,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             TeamProject11Theme {
-<<<<<<< HEAD
-                MainScreen2()
-            }
-        }
-    }
-}
-=======
+
                 NaverMapScreen(
                     /*
                     API 사용하는 Android package가 제한되어 있어서,
@@ -40,4 +33,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
->>>>>>> origin/minyoung
+
