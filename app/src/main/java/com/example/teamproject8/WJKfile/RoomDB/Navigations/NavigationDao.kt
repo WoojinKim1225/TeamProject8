@@ -1,4 +1,4 @@
-package com.example.teamproject8.WJKfile.RoomDB
+package com.example.teamproject8.WJKfile.RoomDB.Navigations
 
 import androidx.room.Dao
 import androidx.room.Insert

@@ -2,7 +2,7 @@ package com.example.teamproject8.WJKfile.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.teamproject8.WJKfile.RoomDB.NavigationDao
+import com.example.teamproject8.WJKfile.RoomDB.Navigations.NavigationDao
 
 class NavigationViewModelFactory (private val navigationDao: NavigationDao) :
     ViewModelProvider.Factory {

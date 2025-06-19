@@ -6,6 +6,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Looper
 import android.util.Log
+import androidx.activity.result.launch
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -23,6 +24,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +36,7 @@ import com.example.teamproject8.MYNfile.MapsFun.NaverMapWithRouteView
 import com.example.teamproject8.MYNfile.MapsFun.RouteSummaryView
 import com.example.teamproject8.MYNfile.MapsFun.rememberMapViewWithLifecycle
 import com.example.teamproject8.MYNfile.MapsPackage.Summary
+import com.example.teamproject8.WJKfile.RoomDB.Navigations.addToSavedDB
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -46,6 +49,7 @@ import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.overlay.Marker
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -94,6 +98,9 @@ fun NaverMapScreen(
     val context = LocalContext.current
     val mapView = rememberMapViewWithLifecycle(context) // 생명주기 연동된 mapView
     var naverMap by remember { mutableStateOf<NaverMap?>(null) }
+
+    // WJK: 추가
+    val scope = rememberCoroutineScope()
 
     // 날짜 입력
     if (showDatePicker) {
@@ -157,10 +164,13 @@ fun NaverMapScreen(
                                 origin = null; destination = null; summary = null; pathPoints = emptyList()
                                 selectedDateTime = null; showDestinationSelector = false
                             },
-                            modifier = Modifier.align(Alignment.TopStart).padding(16.dp)
+                            modifier = Modifier
+                                .align(Alignment.TopStart)
+                                .padding(16.dp)
                         ) {
                             Icon(Icons.Default.ArrowBack, contentDescription = "뒤로가기")
                         }
+
                     }
 
                     else -> {
@@ -188,7 +198,9 @@ fun NaverMapScreen(
                                     showDatePicker = true
                                     origin = null; destination = null; summary = null
                                 },
-                                modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp)
+                                modifier = Modifier
+                                    .align(Alignment.BottomEnd)
+                                    .padding(16.dp)
                             ) {
                                 Icon(Icons.Default.Add, contentDescription = "날짜/시간 선택")
                             }
@@ -212,11 +224,43 @@ fun NaverMapScreen(
                         arrivalTime = s.arrivalTime,
                         modifier = Modifier.align(Alignment.BottomCenter)
                     )
+
+                    IconButton(
+                        onClick = {
+                            scope.launch {
+                                try {
+                                    addToSavedDB(
+                                        context = context,
+                                        summary = s,
+                                        pathPoints = pathPoints,
+                                        originAddress = originAddress,
+                                        destinationAddress = destinationAddress,
+                                        originLatLng = origin!!, // origin과 destination이 null이 아님을 확인
+                                        destinationLatLng = destination!!,
+                                        selectedDateTime = selectedDateTime // selectedDateTime도 null이 아님을 확인하거나 nullable 처리
+                                    )
+                                    // (선택 사항) 저장 완료 후 사용자에게 알림 (예: Toast 메시지)
+                                    // Toast.makeText(context, "경로가 저장되었습니다.", Toast.LENGTH_SHORT).show()
+                                    Log.d("NaverMapScreen", "Route saved to DB successfully")
+                                } catch (e: Exception) {
+                                    // (선택 사항) 오류 처리 (예: Logcat에 오류 기록, 사용자에게 오류 알림)
+                                    Log.e("NaverMapScreen", "Error saving route to DB", e)
+                                    // Toast.makeText(context, "경로 저장에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        },
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(16.dp)
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = "추가")
+                    }
                 }
             }
         }
     }
 }
+
 
 @SuppressLint("MissingPermission")
 @Composable

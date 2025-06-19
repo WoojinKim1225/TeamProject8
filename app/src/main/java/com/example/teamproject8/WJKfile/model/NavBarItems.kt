@@ -23,10 +23,10 @@ object NavBarItems{
             route = Routes.Saved.route
         ),
         BarItem(
-            title = Routes.Favorites.route,
+            title = Routes.Logs.route,
             selectIcon = Icons.Default.Favorite,
             onSelectedIcon = Icons.Outlined.FavoriteBorder,
-            route = Routes.Favorites.route,
+            route = Routes.Logs.route,
         )
     )
 }

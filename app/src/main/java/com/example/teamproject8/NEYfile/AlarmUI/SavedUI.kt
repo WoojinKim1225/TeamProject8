@@ -25,8 +25,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.teamproject8.WJKfile.RoomDB.NavigationDatabase
-import com.example.teamproject8.WJKfile.RoomDB.NavigationEntity
+import com.example.teamproject8.WJKfile.RoomDB.Navigations.NavigationDatabase
+import com.example.teamproject8.WJKfile.RoomDB.Navigations.NavigationEntity
 import com.example.teamproject8.WJKfile.ViewModel.NavigationDatabaseViewModel
 import com.example.teamproject8.WJKfile.ViewModel.NavigationViewModelFactory
 

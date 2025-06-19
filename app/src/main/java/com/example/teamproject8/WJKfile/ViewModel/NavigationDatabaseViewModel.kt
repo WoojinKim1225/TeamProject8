@@ -2,13 +2,14 @@ package com.example.teamproject8.WJKfile.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.teamproject8.R
-import com.example.teamproject8.WJKfile.RoomDB.NavigationDao
-import com.example.teamproject8.WJKfile.RoomDB.NavigationEntity
+import com.example.teamproject8.WJKfile.RoomDB.Navigations.NavigationDao
+import com.example.teamproject8.WJKfile.RoomDB.Navigations.NavigationEntity
+import com.naver.maps.geometry.LatLng
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 class NavigationDatabaseViewModel(private val navigationDao: NavigationDao) : ViewModel() {
     val navigationItems:StateFlow<List<NavigationEntity>> = navigationDao.GetAllItems()
@@ -22,21 +23,21 @@ class NavigationDatabaseViewModel(private val navigationDao: NavigationDao) : Vi
         viewModelScope.launch {
             val sampleNavigationItems = listOf(
                 NavigationEntity(
-                    id = TODO(),
-                    title = TODO(),
-                    distance = TODO(),
-                    duration = TODO(),
-                    pathPoints = TODO(),
-                    mode = TODO(),
-                    origin = TODO(),
-                    destination = TODO(),
-                    startLatLng = TODO(),
-                    endLatLng = TODO(),
-                    alarmTime = TODO(),
-                    departureTime = TODO(),
-                    arrivalTime = TODO(),
-                    icon = TODO(),
-                    route = TODO()
+                    id = 1,
+                    title = "test",
+                    distance = 0.0,
+                    duration = 0,
+                    pathPoints = emptyList(),
+                    mode = "test",
+                    origin = "test",
+                    destination = "test",
+                    startLatLng = LatLng(0.0,0.0),
+                    endLatLng = LatLng(0.0,0.0),
+                    alarmTime = LocalDateTime.now(),
+                    departureTime = LocalDateTime.now(),
+                    arrivalTime = LocalDateTime.now(),
+                    icon = 0,
+                    route = "test"
                 )
 
             )

@@ -5,10 +5,9 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.work.CoroutineWorker
-import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.teamproject8.MainActivity
-import com.example.teamproject8.WJKfile.RoomDB.NavigationDatabase
+import com.example.teamproject8.WJKfile.RoomDB.Navigations.NavigationDatabase
 import com.example.week13.makeNotification
 
 class DBupdateWorker(context: Context, params:WorkerParameters): CoroutineWorker(context, params) {      //DBUPdate 관련 함수
