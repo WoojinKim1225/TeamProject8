@@ -3,6 +3,7 @@ package com.example.teamproject8.NEYfile.AlarmUI
 import android.app.PendingIntent
 import android.content.Intent
 import android.graphics.Color
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +38,7 @@ import com.example.teamproject8.MYNfile.MapsFun.MiniRouteMapView
 import com.example.teamproject8.MYNfile.MapsFun.rememberMapViewWithLifecycle
 import com.example.teamproject8.MainActivity
 import com.example.teamproject8.NEYfile.WorkManager.ScheduleRequest
+import com.example.teamproject8.R
 import com.example.teamproject8.WJKfile.RoomDB.NavigationDatabase
 import com.example.teamproject8.WJKfile.RoomDB.NavigationEntity
 import com.example.week13.makeNotification
@@ -46,13 +48,14 @@ import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.overlay.PathOverlay
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 @Composable
 fun SavedItemUI(item: NavigationEntity, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val appcontext = context.applicationContext
 
-    val titleIcon: Int = item.icon
+    val titleIcon: Int = R.drawable.baseline_access_alarm_24
     val locScript = item.origin + " ️-> " + item.destination
     val timeScript = "${item.departureTime.toString()} -> ${item.arrivalTime.toString()}"
 
@@ -86,9 +89,9 @@ fun SavedItemUI(item: NavigationEntity, modifier: Modifier = Modifier) {
                     )
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(5.dp))
                 MiniRouteMapView2(item.pathPoints, modifier = Modifier.fillMaxWidth().height(120.dp))       //minimap 출력
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(5.dp))
 
                 Text(
                     timeScript,
@@ -96,8 +99,6 @@ fun SavedItemUI(item: NavigationEntity, modifier: Modifier = Modifier) {
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(10.dp)
                 )
-
-                Spacer(modifier = Modifier.height(12.dp))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -120,39 +121,70 @@ fun SavedItemUI(item: NavigationEntity, modifier: Modifier = Modifier) {
 
                     Switch(
                         checked = ischecked,
-                        onCheckedChange = {
-                            checked ->
+                        onCheckedChange = { checked ->
                             ischecked = checked
                             item.doWork = checked
 
-                            if(ischecked == false){
-                                coroutinescope.launch {
-                                    dao.UpdateItem(item)
-                                }
-                                ScheduleRequest.CancelWorkManager(
-                                    context = context,
-                                    tag = item.id.toString()
-                                )       //Workmanager 동작 중지 명령
-                            }else {
-                                item.alarmTime = item.departureTime!!.minusMinutes(60)
-                                coroutinescope.launch {
-                                    dao.UpdateItem(item)
-                                }
+                            val currentTime: LocalDateTime = LocalDateTime.now()
 
-                                ScheduleRequest.CancelWorkManager(
-                                    context = context,
-                                    tag = item.id.toString()
-                                )       //Workmanager 초기화
-                                makeNotification(appcontext, title, message, item.id, pendingIntent)
-                                ScheduleRequest.DBWorkManager(
-                                    appcontext,
-                                    item.alarmTime!!,
-                                    item.id,
-                                    item.id.toString()
-                                )
+                            if (item.departureTime!! < currentTime) {
+                                Toast.makeText(
+                                    context,
+                                    "현재 시간 기준으로 설정이 불가능한 알림 입니다",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                ischecked = false
+                                item.doWork = false
+                            } else {
+                                if (ischecked == false) {
+                                    coroutinescope.launch {
+                                        dao.UpdateItem(item)
+                                    }
+                                    Toast.makeText(context, "알림이 해제되었습니다", Toast.LENGTH_SHORT)
+                                        .show()
+                                    ScheduleRequest.CancelWorkManager(
+                                        context = context,
+                                        tag = item.id.toString()
+                                    )       //Workmanager 동작 중지 명령
+                                } else {
+                                    item.alarmTime = item.departureTime!!.minusMinutes(60)
+                                    if (item.alarmTime!! > item.departureTime) {
+                                        item.alarmTime = item.departureTime!!.minusMinutes(30)
+                                        if (item.alarmTime!! > item.departureTime) {
+                                            Toast.makeText(
+                                                context,
+                                                "현재 시간 기준으로 설정이 불가능한 알림 입니다",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                            ischecked = false
+                                            item.doWork = false
+                                        }
+                                    }
+                                    coroutinescope.launch {
+                                        dao.UpdateItem(item)
+                                    }
+                                    Toast.makeText(context, "알림이 설정되었습니다", Toast.LENGTH_SHORT)
+                                        .show()
+                                    ScheduleRequest.CancelWorkManager(
+                                        context = context,
+                                        tag = item.id.toString()
+                                    )       //Workmanager 초기화
+                                    makeNotification(
+                                        appcontext,
+                                        title,
+                                        message,
+                                        item.id,
+                                        pendingIntent
+                                    )
+                                    ScheduleRequest.DBWorkManager(
+                                        appcontext,
+                                        item.alarmTime!!,
+                                        item.id,
+                                        item.id.toString()
+                                    )
+                                }
                             }
-                        },
-                        modifier = Modifier.size(20.dp)
+                        }
                     )
                 }
             }
@@ -175,7 +207,7 @@ fun SavedItemUI(item: NavigationEntity, modifier: Modifier = Modifier) {
                         modifier = Modifier.padding(10.dp)
                     )
                 }
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(5.dp))
 
                 Text(
                     timeScript,
