@@ -1,5 +1,6 @@
 package com.example.teamproject8.WJKfile.ui
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -76,7 +77,7 @@ fun LogsWithCalender(navController: NavController, viewModel: LogsViewModel = vi
     var currentMonth by remember { mutableStateOf(YearMonth.from(today)) }
 
     LaunchedEffect(currentMonth) {
-        viewModel.loadLogsForWeek(currentMonth.year, currentMonth.monthValue)
+        viewModel.loadLogsForMonth(today.year, today.monthValue)
     }
 
     Column(modifier = Modifier
@@ -170,6 +171,7 @@ fun CalendarGrid(month: YearMonth, viewModel: LogsViewModel) {
     val prevMonthDays = prevMonth.lengthOfMonth()
 
     val logsPerDay = viewModel.logs.groupingBy { it.arrivalTime?.toLocalDate() }.eachCount()
+    Log.i("로그", viewModel.logs.toString())
 
     val totalCells = ((firstDayOfWeek + daysInMonth + 6) / 7) * 7  // 전체 칸 수 (7의 배수로 맞춤)
 

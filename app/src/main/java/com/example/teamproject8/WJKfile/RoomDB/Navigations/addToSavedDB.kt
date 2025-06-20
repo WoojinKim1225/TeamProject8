@@ -14,7 +14,8 @@ suspend fun addToSavedDB(
     originLatLng: LatLng,
     destinationLatLng: LatLng,
     selectedDateTime: LocalDateTime?,
-    departureTime: LocalDateTime?)
+    departureTime: LocalDateTime?,
+    arrivalTime: LocalDateTime?)
 {
     val db = NavigationDatabase.getDBInstance(context = context)
     db.getItemDao().InsertItem(NavigationEntity(
@@ -29,7 +30,7 @@ suspend fun addToSavedDB(
         endLatLng = destinationLatLng,
         alarmTime = selectedDateTime,
         departureTime = departureTime,
-        arrivalTime = selectedDateTime,
+        arrivalTime = arrivalTime,
         icon = 0,
         route = "test"
     ))

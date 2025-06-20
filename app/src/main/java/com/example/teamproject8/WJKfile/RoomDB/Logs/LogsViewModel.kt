@@ -23,10 +23,12 @@ class LogsViewModel(private val dao: LogsDao) : ViewModel() {
         }
     }
 
-    fun loadLogsForWeek(year: Int, week: Int) {
-        val (start, end) = getStartAndEndOfWeek(year, week)
+    fun loadLogsForMonth(year: Int, month: Int) {
+        val (start, end) = getStartAndEndOfMonth(year, month)
         viewModelScope.launch {
-            logs = dao.getItemsByWeek(start, end)
+            dao.GetAllItems().collect { emittedList ->
+                logs = emittedList
+            }
         }
     }
 
@@ -38,5 +40,11 @@ class LogsViewModel(private val dao: LogsDao) : ViewModel() {
             .with(weekFields.dayOfWeek(), 1)
         val endOfWeek = startOfWeek.plusDays(6)
         return startOfWeek to endOfWeek
+    }
+
+    private fun getStartAndEndOfMonth(year: Int, month: Int): Pair<LocalDate, LocalDate> {
+        val startOfMonth = LocalDate.of(year, month, 1)
+        val endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth())
+        return startOfMonth to endOfMonth
     }
 }

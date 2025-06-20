@@ -240,7 +240,8 @@ fun NaverMapScreen(
                                         originLatLng = origin!!, // origin과 destination이 null이 아님을 확인
                                         destinationLatLng = destination!!,
                                         selectedDateTime = selectedDateTime, // selectedDateTime도 null이 아님을 확인하거나 nullable 처리,
-                                        departureTime = s.departureTime
+                                        departureTime = s.departureTime,
+                                        arrivalTime = s.arrivalTime
                                     )
                                     // (선택 사항) 저장 완료 후 사용자에게 알림 (예: Toast 메시지)
                                     Toast.makeText(context, "경로가 저장되었습니다.", Toast.LENGTH_SHORT).show()
