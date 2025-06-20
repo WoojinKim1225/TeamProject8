@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -165,7 +166,7 @@ fun LogsWithCalender(navController: NavController, viewModel: LogsViewModel = vi
                             .padding(12.dp)
                     ) {
                         Column(
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.weight(weight = 1.0f)
                         ) {
                             Text(
                                 text = "${log.arrivalTime?.hour} : ${log.arrivalTime?.minute}",
