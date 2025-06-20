@@ -125,7 +125,7 @@ fun SavedItemUI(item: NavigationEntity, modifier: Modifier = Modifier) {
 
                             item.alarmTime = item.departureTime!!.minusMinutes(60)
 
-                            if (item.departureTime!! < currentTime) {
+                            if (item.departureTime!! < currentTime.plusMinutes(10)) {
                                 Toast.makeText(
                                     context,
                                     "현재 시간 기준으로 설정이 불가능한 알림 입니다",

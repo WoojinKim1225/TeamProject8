@@ -37,7 +37,7 @@ fun SavedUI(
         contentPadding = PaddingValues(top = 30.dp, bottom = 16.dp)
     ) {
         items(SavedItemList) { item ->
-            if(item.departureTime!! < currentTime)
+            if(item.departureTime!! > currentTime)
                 SavedItemUI(item)
         }
 
