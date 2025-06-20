@@ -138,7 +138,7 @@ fun NaverMapWithRouteView(
 
                         Marker().apply {
                             position = current
-                            captionText = "현재 위치"
+                            captionText = "출발지"
                             setMap(map)
                         }
                         Marker().apply {

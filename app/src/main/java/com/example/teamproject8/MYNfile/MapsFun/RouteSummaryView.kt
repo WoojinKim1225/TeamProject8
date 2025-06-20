@@ -77,9 +77,9 @@ fun RouteSummaryView(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // 시작/도착 좌표
-                Text("시작 좌표: ${"%.6f, %.6f".format(startLatLng.latitude, startLatLng.longitude)}")
-                Text("도착 좌표: ${"%.6f, %.6f".format(endLatLng.latitude, endLatLng.longitude)}")
-                Spacer(modifier = Modifier.height(8.dp))
+//                Text("시작 좌표: ${"%.6f, %.6f".format(startLatLng.latitude, startLatLng.longitude)}")
+//                Text("도착 좌표: ${"%.6f, %.6f".format(endLatLng.latitude, endLatLng.longitude)}")
+//                Spacer(modifier = Modifier.height(8.dp))
 
                 // 교통 수단 및 거리 및 시간
                 when (mode) {
