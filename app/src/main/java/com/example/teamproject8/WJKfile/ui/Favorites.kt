@@ -1,6 +1,8 @@
 package com.example.teamproject8.WJKfile.ui
 
+import androidx.compose.foundation.R
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,11 +14,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -31,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,7 +47,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.teamproject8.WJKfile.RoomDB.Logs.LogsDatabase
-import com.example.teamproject8.WJKfile.RoomDB.Logs.LogsEntity
 import com.example.teamproject8.WJKfile.RoomDB.Logs.LogsViewModel
 import com.example.teamproject8.WJKfile.RoomDB.Logs.LogsViewModelFactory
 import java.time.DayOfWeek
@@ -107,14 +115,58 @@ fun FavoritesWithCalendar(viewModel: LogsViewModel = viewModel(
         Spacer(modifier = Modifier.height(16.dp))
 
         // 달력 그리드 (중간)
-        CalendarGrid(currentMonth, viewModel.logs)
+        CalendarGrid(currentMonth, viewModel)
 
         Spacer(modifier = Modifier.weight(1f))
+
+        if (viewModel.dateLogs.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(16.dp))
+
+            val date = viewModel.dateLogs.first().arrivalTime?.toLocalDate()
+            date?.let {
+                Text(
+                    text = "${date.format(DateTimeFormatter.ofPattern("yyyy년 M월 d일"))}의 로그",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                items(viewModel.dateLogs) { log ->
+                    Column(
+                        modifier = Modifier
+                            .background(Color(0xFFE0E0E0), shape = MaterialTheme.shapes.medium)
+                            .padding(12.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            Text(
+                                text = "${log.arrivalTime?.hour} : ${log.arrivalTime?.minute}",
+                                fontSize = 14.sp
+                            )
+                            Text(
+                                text = "${log.origin} -> ${log.destination}",
+                                fontSize = 12.sp
+                            )
+                        }
+                        if (log.isSuccess) {
+                            Icon(imageVector = Icons.Default.Check, contentDescription = "check")
+                        } else {
+                            Icon(imageVector = Icons.Default.Clear, contentDescription = "clear")
+                        }
+
+                    }
+                }
+            }
+        }
     }
 }
 
 @Composable
-fun CalendarGrid(month: YearMonth, logs: List<LogsEntity>) {
+fun CalendarGrid(month: YearMonth, viewModel: LogsViewModel) {
     val firstDayOfMonth = month.atDay(1)
     val firstDayOfWeek = firstDayOfMonth.dayOfWeek.value % 7  // 일요일 = 0
     val daysInMonth = month.lengthOfMonth()
@@ -122,9 +174,7 @@ fun CalendarGrid(month: YearMonth, logs: List<LogsEntity>) {
     val prevMonth = month.minusMonths(1)
     val prevMonthDays = prevMonth.lengthOfMonth()
 
-    val logsCount = logs.size
-    var i = 0;
-    val logsPerDay = logs.groupingBy { it.arrivalTime?.toLocalDate() }.eachCount()
+    val logsPerDay = viewModel.logs.groupingBy { it.arrivalTime?.toLocalDate() }.eachCount()
 
     val totalCells = ((firstDayOfWeek + daysInMonth + 6) / 7) * 7  // 전체 칸 수 (7의 배수로 맞춤)
 
@@ -152,8 +202,6 @@ fun CalendarGrid(month: YearMonth, logs: List<LogsEntity>) {
                     val dayText: String
                     val isInMonth: Boolean
                     var date: LocalDate? = null
-
-
 
                     when {
                         cellIndex < firstDayOfWeek -> {
@@ -202,40 +250,49 @@ fun CalendarGrid(month: YearMonth, logs: List<LogsEntity>) {
 
                     val logCount = logsPerDay[date] ?: 0
 
-                    Box(
+                    Button(
+                        onClick = {viewModel.loadLogsForDate(date)},
                         modifier = Modifier
                             .weight(1f)
                             .aspectRatio(1f)
-                            .padding(4.dp)
+                            .padding(4.dp),
                     ) {
-                        Text(
-                            text = dayText,
-                            color = displayColor,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                        if (logCount > 0) {
-                            Box(
-                                modifier = Modifier
-                                    .align(Alignment.BottomEnd)
-                                    .size(16.dp)
-                                    .background(Color.Red, shape = CircleShape),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = logCount.toString(),
-                                    color = Color.White,
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
+                        Box(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            Text(
+                                text = dayText,
+                                color = displayColor,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+
+                            if (logCount > 0) {
+                                Box(
+                                    modifier = Modifier
+                                        .align(Alignment.BottomEnd)
+                                        .size(16.dp)
+                                        .background(Color.Red, shape = CircleShape),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = logCount.toString(),
+                                        color = Color.White,
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
                             }
                         }
+
                     }
                 }
             }
         }
     }
 }
+
+
 private fun isHoliday(date: LocalDate?): Boolean {
     if (date == null) return false
 

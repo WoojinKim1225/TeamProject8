@@ -14,10 +14,12 @@ class LogsViewModel(private val dao: LogsDao) : ViewModel() {
 
     var logs by mutableStateOf<List<LogsEntity>>(emptyList())
         private set
+    var dateLogs by mutableStateOf<List<LogsEntity>>(emptyList())
+        private set
 
     fun loadLogsForDate(date: LocalDate) {
         viewModelScope.launch {
-            logs = dao.getItemsByDate(date)
+            dateLogs = dao.getItemsByDate(date)
         }
     }
 
