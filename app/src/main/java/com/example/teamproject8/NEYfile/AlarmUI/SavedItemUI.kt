@@ -184,7 +184,7 @@ fun SavedItemUI(item: NavigationEntity, modifier: Modifier = Modifier) {
                                     makeNotification(
                                         appcontext,
                                         title,
-                                        message,
+                                        message,false,
                                         item.id,
                                         pendingIntent
                                     )
@@ -233,7 +233,7 @@ fun SavedItemUI(item: NavigationEntity, modifier: Modifier = Modifier) {
                                     makeNotification(
                                         appcontext,
                                         title,
-                                        message,
+                                        message,false,
                                         item.id,
                                         pendingIntent
                                     )

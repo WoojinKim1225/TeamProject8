@@ -11,12 +11,15 @@ import androidx.core.app.NotificationCompat
 import com.example.teamproject8.MainActivity
 import com.example.teamproject8.R
 
-fun makeNotification(context: Context, title: String,message: String, id:Int, pendingIntent:PendingIntent) {
+fun makeNotification(context: Context, title: String,message: String, last:Boolean, id:Int, pendingIntent:PendingIntent) {
     Log.d("SavedItemUI", "알림 호출됨")
 
     val channelId = "ETDChannel"
     val channelName = "ETDChannel"
-    val notificationId = id
+    var notificationId = id
+    if(last){
+        notificationId = notificationId*(-1)
+    }
 
     val notificationChannel =
         NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH)
@@ -29,6 +32,7 @@ fun makeNotification(context: Context, title: String,message: String, id:Int, pe
         .setContentTitle(title)
         .setContentText(message)
         .setPriority(NotificationManager.IMPORTANCE_HIGH)
+        .setDefaults(NotificationCompat.DEFAULT_ALL)
         .setContentIntent(pendingIntent)
         .setAutoCancel(false)
         .setOngoing(true)

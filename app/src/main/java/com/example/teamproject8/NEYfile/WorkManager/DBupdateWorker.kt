@@ -46,7 +46,7 @@ class DBupdateWorker(context: Context, params: WorkerParameters) :
             makeNotification(
                 workContext,
                 "알림 발생 오류",
-                "DB를 가져오는 중에 문제가 생겼습니다.",
+                "DB를 가져오는 중에 문제가 생겼습니다.",false,
                 item_id,
                 pendingIntent
             )
@@ -71,6 +71,7 @@ class DBupdateWorker(context: Context, params: WorkerParameters) :
                     workContext,
                     "알림 발생 오류",
                     "DB 파일에 문제가 생겼습니다.",
+                    false,
                     item_id,
                     pendingIntent
                 )
@@ -101,10 +102,10 @@ class DBupdateWorker(context: Context, params: WorkerParameters) :
             if(newDepartTime < item.departureTime!!.minusMinutes(3)){
                 val title: String = "${item.origin} -> ${item.destination}"
                 val message: String =
-                    " WorkManager $departTimeStr -> $arrivalTimeStr 으로 수정되었습니다."
+                    " $departTimeStr -> $arrivalTimeStr 으로 수정되었습니다."
 //                val message2: String = "WorkManager입니다. 다음 계산은 ${item.alarmTime}에 진행됩니다."
 //                makeNotification(applicationContext, title, message2, 100, pendingIntent)
-                makeNotification(applicationContext, title, message, item_id, pendingIntent)
+                makeNotification(applicationContext, title, message, false, item_id, pendingIntent)
                 item.departureTime = newDepartTime
                 dao.UpdateItem(item)
             }
@@ -121,7 +122,7 @@ class DBupdateWorker(context: Context, params: WorkerParameters) :
                 val title: String = "${item.origin} -> ${item.destination}"
                 val message: String =
                     "지금 출발해야 합니다"
-                makeNotification(applicationContext, title, message, item_id, pendingIntent)
+                makeNotification(applicationContext, title, message, true, item_id, pendingIntent)
 
                 val logItem = LogsEntity(
                     id = item.id,
@@ -143,7 +144,7 @@ class DBupdateWorker(context: Context, params: WorkerParameters) :
             Log.d("WorkManager1", "$item_id Worker work")
 
         } else {
-            makeNotification(workContext, "알림 발생 오류", "DB 파일에 문제가 생겼습니다.", item_id, pendingIntent)
+            makeNotification(workContext, "알림 발생 오류", "DB 파일에 문제가 생겼습니다.", false, item_id, pendingIntent)
             return Result.failure()
         }
         return Result.success()
