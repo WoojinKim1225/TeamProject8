@@ -79,12 +79,6 @@ fun LogsWithCalender(navController: NavController, viewModel: LogsViewModel = vi
         dao = LogsDatabase.getDBInstance(navController.context).getItemDao()
     )
 )) {
-    val context = LocalContext.current
-    val db = LogsDatabase.getDBInstance(context)
-    val dao = db.getItemDao()
-    val coroutinescope = rememberCoroutineScope()       //imsi
-    var item_id = 1
-
 
     val today = remember { LocalDateTime.now() }
     var currentMonth by remember { mutableStateOf(YearMonth.from(today)) }
@@ -116,22 +110,6 @@ fun LogsWithCalender(navController: NavController, viewModel: LogsViewModel = vi
 
             IconButton(onClick = {
                 currentMonth = currentMonth.plusMonths(1)
-
-                //imsi
-                val newLog = LogsEntity(
-                    id = item_id,
-                    title = "imsi",
-                    origin = "imsi",
-                    destination = "imsi",
-                    arrivalTime = LocalDateTime.now(),
-                    isSuccess = true
-                )
-
-                coroutinescope.launch {
-                    dao.InsertItem(newLog)
-                }
-                item_id++
-
             }) {
                 Icon(imageVector = Icons.Default.ArrowForward, contentDescription = "다음 달")
             }
