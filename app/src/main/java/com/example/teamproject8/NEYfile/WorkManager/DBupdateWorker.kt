@@ -88,14 +88,14 @@ class DBupdateWorker(context: Context, params: WorkerParameters) :
                 val title: String = "${item.origin} -> ${item.destination}"
                 val message: String =
                     " WorkManager ${item.departureTime} 출발 시 ${item.arrivalTime}에 도착 예정으로 수정되었습니다."
-                val message2: String = "WorkManager입니다. 다음 계산은 ${item.alarmTime}에 진행됩니다."
-                makeNotification(applicationContext, title, message2, 100, pendingIntent)
+//                val message2: String = "WorkManager입니다. 다음 계산은 ${item.alarmTime}에 진행됩니다."
+//                makeNotification(applicationContext, title, message2, 100, pendingIntent)
                 makeNotification(applicationContext, title, message, item_id, pendingIntent)
             }
 
-            val title: String = "${item.origin} -> ${item.destination}"
-            val message2: String = "WorkManager입니다. 다음 계산은 ${item.alarmTime}에 진행됩니다."
-            makeNotification(applicationContext, title, message2, 100, pendingIntent)
+//            val title: String = "${item.origin} -> ${item.destination}"
+//            val message2: String = "WorkManager입니다. 다음 계산은 ${item.alarmTime}에 진행됩니다."
+//            makeNotification(applicationContext, title, message2, 100, pendingIntent)
 
             //Update
             item.departureTime = newDepartTime

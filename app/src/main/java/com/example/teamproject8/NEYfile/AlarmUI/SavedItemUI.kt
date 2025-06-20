@@ -156,7 +156,7 @@ fun SavedItemUI(item: NavigationEntity, modifier: Modifier = Modifier) {
                                     val title: String = "${item.origin} -> ${item.destination}"
                                     val message: String =
                                         "${item.departureTime} 출발 시 ${item.arrivalTime}에 도착 예정입니다."
-                                    val message2: String = "다음 계산은 ${item.alarmTime}에 진행됩니다"
+//                                    val message2: String = "다음 계산은 ${item.alarmTime}에 진행됩니다"
 
                                     ScheduleRequest.CancelWorkManager(
                                         context = context,
@@ -169,7 +169,7 @@ fun SavedItemUI(item: NavigationEntity, modifier: Modifier = Modifier) {
                                         item.id,
                                         pendingIntent
                                     )
-                                    makeNotification(appcontext, title, message2, 100, pendingIntent)
+//                                    makeNotification(appcontext, title, message2, 100, pendingIntent)
                                     ScheduleRequest.DBWorkManager(
                                         appcontext,
                                         item.alarmTime!!,
