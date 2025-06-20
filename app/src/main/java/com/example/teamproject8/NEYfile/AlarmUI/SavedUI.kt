@@ -33,7 +33,6 @@ fun SavedUI(
     val currentTime: LocalDateTime = LocalDateTime.now()
 
     LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(10.dp),
         contentPadding = PaddingValues(top = 30.dp, bottom = 16.dp)
     ) {
         items(SavedItemList) { item ->

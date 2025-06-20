@@ -122,7 +122,7 @@ class DBupdateWorker(context: Context, params: WorkerParameters) :
 
                 val logItem = LogsEntity(
                     id = item.id,
-                    title = TODO(),
+                    title = "",
                     origin = item.origin,
                     destination = item.destination,
                     arrivalTime = item.arrivalTime,
