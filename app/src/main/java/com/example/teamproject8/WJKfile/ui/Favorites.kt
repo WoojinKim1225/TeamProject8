@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.lazy.items
@@ -133,14 +134,14 @@ fun FavoritesWithCalendar(viewModel: LogsViewModel = viewModel(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(viewModel.dateLogs) { log ->
-                    Column(
+                    Row(
                         modifier = Modifier
                             .background(Color(0xFFE0E0E0), shape = MaterialTheme.shapes.medium)
                             .padding(12.dp)
                     ) {
-                        Row(
+                        Column(
                             modifier = Modifier.fillMaxSize()
                         ) {
                             Text(
