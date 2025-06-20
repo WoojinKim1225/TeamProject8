@@ -48,15 +48,20 @@ import com.naver.maps.map.NaverMap
 import com.naver.maps.map.overlay.PathOverlay
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun SavedItemUI(item: NavigationEntity, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val appcontext = context.applicationContext
 
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+    val departTimeStr = item.departureTime!!.format(formatter)
+    val arrivalTimeStr = item.arrivalTime!!.format(formatter)
+
     val titleIcon: Int = R.drawable.baseline_access_alarm_24
     val locScript = item.origin + " ️-> " + item.destination
-    val timeScript = "${item.departureTime.toString()} -> ${item.arrivalTime.toString()}"
+    val timeScript = "$departTimeStr -> $arrivalTimeStr"
 
     val db = NavigationDatabase.getDBInstance(context)
     val dao = db.getItemDao()
@@ -66,7 +71,7 @@ fun SavedItemUI(item: NavigationEntity, modifier: Modifier = Modifier) {
     var ischecked by remember { mutableStateOf(item.doWork)}
 
     Card(
-        modifier = Modifier.clickable { expanded = !expanded }
+        modifier = Modifier.clickable { expanded = !expanded }.padding(horizontal = 10.dp)
     ) {
         if (expanded) {
             Column {
@@ -163,9 +168,13 @@ fun SavedItemUI(item: NavigationEntity, modifier: Modifier = Modifier) {
                                     Toast.makeText(context, "다음주 알림이 설정되었습니다", Toast.LENGTH_SHORT)
                                         .show()
 
+                                    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+                                    val departTimeStr = item.departureTime!!.format(formatter)
+                                    val arrivalTimeStr = item.arrivalTime!!.format(formatter)
+
                                     val title: String = "${newItem.origin} -> ${newItem.destination}"
                                     val message: String =
-                                        "${newItem.departureTime} 출발 시 ${newItem.arrivalTime}에 도착 예정입니다."
+                                        "$departTimeStr 출발 시 -> $arrivalTimeStr 에 도착 예정입니다."
 //                                    val message2: String = "다음 계산은 ${item.alarmTime}에 진행됩니다"
 
                                     ScheduleRequest.CancelWorkManager(
@@ -208,9 +217,13 @@ fun SavedItemUI(item: NavigationEntity, modifier: Modifier = Modifier) {
                                     Toast.makeText(context, "알림이 설정되었습니다", Toast.LENGTH_SHORT)
                                         .show()
 
+                                    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+                                    val departTimeStr = item.departureTime!!.format(formatter)
+                                    val arrivalTimeStr = item.arrivalTime!!.format(formatter)
+
                                     val title: String = "${item.origin} -> ${item.destination}"
                                     val message: String =
-                                        "${item.departureTime} 출발 시 ${item.arrivalTime}에 도착 예정입니다."
+                                        "$departTimeStr 출발 시 -> $arrivalTimeStr 에 도착 예정입니다."
 //                                    val message2: String = "다음 계산은 ${item.alarmTime}에 진행됩니다"
 
                                     ScheduleRequest.CancelWorkManager(

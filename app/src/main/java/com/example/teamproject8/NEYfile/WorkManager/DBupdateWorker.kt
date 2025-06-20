@@ -21,6 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 class DBupdateWorker(context: Context, params: WorkerParameters) :
     CoroutineWorker(context, params) {      //DBUPdate 관련 함수
@@ -92,25 +93,28 @@ class DBupdateWorker(context: Context, params: WorkerParameters) :
             item.alarmTime = item.alarmTime!!.plusMinutes(5)       //다음 Update 10분 뒤
             dao.UpdateItem(item)
 
-            if(newDepartTime < item.departureTime!!.minusMinutes(5)){
+
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+            val departTimeStr = item.departureTime!!.format(formatter)
+            val arrivalTimeStr = item.arrivalTime!!.format(formatter)
+
+            if(newDepartTime < item.departureTime!!.minusMinutes(3)){
                 val title: String = "${item.origin} -> ${item.destination}"
                 val message: String =
-                    " WorkManager ${item.departureTime} 출발 시 ${item.arrivalTime}에 도착 예정으로 수정되었습니다."
+                    " WorkManager $departTimeStr -> $arrivalTimeStr 으로 수정되었습니다."
 //                val message2: String = "WorkManager입니다. 다음 계산은 ${item.alarmTime}에 진행됩니다."
 //                makeNotification(applicationContext, title, message2, 100, pendingIntent)
                 makeNotification(applicationContext, title, message, item_id, pendingIntent)
+                item.departureTime = newDepartTime
+                dao.UpdateItem(item)
             }
 
 //            val title: String = "${item.origin} -> ${item.destination}"
 //            val message2: String = "WorkManager입니다. 다음 계산은 ${item.alarmTime}에 진행됩니다."
 //            makeNotification(applicationContext, title, message2, 100, pendingIntent)
 
-            //Update
-            item.departureTime = newDepartTime
-            dao.UpdateItem(item)
-
             //NEW WorkRequest 발생
-            if (item.alarmTime!! < item.departureTime) {
+            if (item.alarmTime!! < item.departureTime!!.minusMinutes(5)) {
                 //ScheduleRequest
                 ScheduleRequest.DBWorkManager(workContext, item.alarmTime!!, item_id, tag)
             } else {
