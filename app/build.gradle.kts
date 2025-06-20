@@ -90,6 +90,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.google.android.gms:play-services-location:21.0.1") // Gson
+    implementation("androidx.appcompat:appcompat:1.6.1")
     implementation(libs.naver.map.compose)
     implementation(libs.accompanist.permissions)
     testImplementation(libs.junit)

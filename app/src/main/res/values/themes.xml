@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.TeamProject8" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.TeamProject8" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- 앱에서 사용할 색상 -->
+        <item name="colorPrimary">#6200EE</item>
+        <item name="colorPrimaryDark">#3700B3</item>
+        <item name="colorAccent">#03DAC5</item>
+
+        <!-- 흰색 배경 -->
+        <item name="android:windowBackground">#FFFFFF</item>
+
+        <!-- 상태바 아이콘 색 조정 (밝은 배경이면 true) -->
+        <item name="android:windowLightStatusBar">true</item>
+
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+    </style>
 </resources>
