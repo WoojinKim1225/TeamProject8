@@ -120,19 +120,60 @@ fun SavedItemUI(item: NavigationEntity, modifier: Modifier = Modifier) {
                         onCheckedChange = { checked ->
                             ischecked = checked
                             item.doWork = checked
-
                             val currentTime: LocalDateTime = LocalDateTime.now()
-
                             item.alarmTime = item.departureTime!!.minusMinutes(60)
 
                             if (item.departureTime!! < currentTime.plusMinutes(10)) {
                                 Toast.makeText(
                                     context,
-                                    "현재 시간 기준으로 설정이 불가능한 알림 입니다",
+                                    "현재 시간 기준으로 이번주 설정이 불가능한 알림입니다.",
                                     Toast.LENGTH_SHORT
                                 ).show()
-                                ischecked = false
-                                item.doWork = false
+
+                                if (ischecked == false) {
+                                    coroutinescope.launch {
+                                        dao.UpdateItem(item)
+                                    }
+                                    Toast.makeText(context, "알림이 해제되었습니다", Toast.LENGTH_SHORT)
+                                        .show()
+                                    ScheduleRequest.CancelWorkManager(
+                                        context = context,
+                                        tag = item.id.toString()
+                                    )       //Workmanager 동작 중지 명령
+                                } else {
+                                    item.departureTime = item.departureTime!!.plusDays(7)
+                                    item.alarmTime = item.departureTime!!.minusMinutes(60)
+                                    coroutinescope.launch {
+                                        dao.UpdateItem(item)
+                                    }
+
+                                    Toast.makeText(context, "다음주 알림이 설정되었습니다", Toast.LENGTH_SHORT)
+                                        .show()
+
+                                    val title: String = "${item.origin} -> ${item.destination}"
+                                    val message: String =
+                                        "${item.departureTime} 출발 시 ${item.arrivalTime}에 도착 예정입니다."
+//                                    val message2: String = "다음 계산은 ${item.alarmTime}에 진행됩니다"
+
+                                    ScheduleRequest.CancelWorkManager(
+                                        context = context,
+                                        tag = item.id.toString()
+                                    )       //Workmanager 초기화
+                                    makeNotification(
+                                        appcontext,
+                                        title,
+                                        message,
+                                        item.id,
+                                        pendingIntent
+                                    )
+//                                    makeNotification(appcontext, title, message2, 100, pendingIntent)
+                                    ScheduleRequest.DBWorkManager(
+                                        appcontext,
+                                        item.alarmTime!!,
+                                        item.id,
+                                        item.id.toString()
+                                    )
+                                }
                             } else {
                                 if (ischecked == false) {
                                     coroutinescope.launch {
