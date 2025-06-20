@@ -32,10 +32,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -43,8 +45,11 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.teamproject8.WJKfile.RoomDB.Logs.LogsDatabase
+import com.example.teamproject8.WJKfile.RoomDB.Logs.LogsEntity
 import com.example.teamproject8.WJKfile.RoomDB.Logs.LogsViewModel
 import com.example.teamproject8.WJKfile.RoomDB.Logs.LogsViewModelFactory
+import com.example.teamproject8.WJKfile.RoomDB.Navigations.NavigationDatabase
+import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -73,6 +78,13 @@ fun LogsWithCalender(navController: NavController, viewModel: LogsViewModel = vi
         dao = LogsDatabase.getDBInstance(navController.context).getItemDao()
     )
 )) {
+    val context = LocalContext.current
+    val db = LogsDatabase.getDBInstance(context)
+    val dao = db.getItemDao()
+    val coroutinescope = rememberCoroutineScope()       //imsi
+    var item_id = 1
+
+
     val today = remember { LocalDateTime.now() }
     var currentMonth by remember { mutableStateOf(YearMonth.from(today)) }
 
@@ -103,6 +115,22 @@ fun LogsWithCalender(navController: NavController, viewModel: LogsViewModel = vi
 
             IconButton(onClick = {
                 currentMonth = currentMonth.plusMonths(1)
+
+                //imsi
+                val newLog = LogsEntity(
+                    id = item_id,
+                    title = "imsi",
+                    origin = "imsi",
+                    destination = "imsi",
+                    arrivalTime = LocalDateTime.now(),
+                    isSuccess = true
+                )
+
+                coroutinescope.launch {
+                    dao.InsertItem(newLog)
+                }
+                item_id++
+
             }) {
                 Icon(imageVector = Icons.Default.ArrowForward, contentDescription = "다음 달")
             }
