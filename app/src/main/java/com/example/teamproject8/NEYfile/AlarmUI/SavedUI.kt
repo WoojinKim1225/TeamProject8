@@ -19,6 +19,7 @@ import androidx.navigation.NavController
 import com.example.teamproject8.WJKfile.RoomDB.Navigations.NavigationDatabase
 import com.example.teamproject8.WJKfile.ViewModel.NavigationDatabaseViewModel
 import com.example.teamproject8.WJKfile.ViewModel.NavigationViewModelFactory
+import java.time.LocalDateTime
 
 @Composable
 fun SavedUI(
@@ -29,13 +30,15 @@ fun SavedUI(
     )
 ) {
     val SavedItemList by viewModel.navigationItems.collectAsState()
+    val currentTime: LocalDateTime = LocalDateTime.now()
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(10.dp),
         contentPadding = PaddingValues(top = 30.dp, bottom = 16.dp)
     ) {
         items(SavedItemList) { item ->
-            SavedItemUI(item)
+            if(item.departureTime!! < currentTime)
+                SavedItemUI(item)
         }
 
     }
