@@ -250,12 +250,12 @@ fun CalendarGrid(month: YearMonth, viewModel: LogsViewModel) {
 
                     val logCount = logsPerDay[date] ?: 0
 
-                    Button(
-                        onClick = {viewModel.loadLogsForDate(date)},
+                    Box(
                         modifier = Modifier
                             .weight(1f)
                             .aspectRatio(1f)
-                            .padding(4.dp),
+                            .padding(4.dp)
+                            .clickable(onClick = {viewModel.loadLogsForDate(date)})
                     ) {
                         Box(
                             modifier = Modifier.fillMaxSize()
