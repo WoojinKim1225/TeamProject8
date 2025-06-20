@@ -9,6 +9,7 @@ import com.example.teamproject8.NEYfile.AlarmUI.SavedUI
 import com.example.teamproject8.WJKfile.model.Routes
 import com.example.teamproject8.WJKfile.ui.Favorites
 import com.example.teamproject8.BuildConfig
+import com.example.teamproject8.WJKfile.ui.FavoritesWithCalendar
 
 @Composable
 fun NavGraph(navController: NavHostController) {
@@ -30,7 +31,7 @@ fun NavGraph(navController: NavHostController) {
             SavedUI(navController)
         }
         composable(Routes.Logs.route){
-            Favorites()
+            FavoritesWithCalendar()
         }
     }
 }

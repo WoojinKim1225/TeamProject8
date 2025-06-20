@@ -30,6 +30,7 @@ suspend fun addToSavedDB(
         departureTime = selectedDateTime,
         arrivalTime = selectedDateTime,
         icon = 0,
-        route = "test"
+        route = "test",
+        doWork = true
     ))
 }
