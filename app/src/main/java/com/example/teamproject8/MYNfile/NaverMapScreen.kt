@@ -102,24 +102,50 @@ fun NaverMapScreen(
     // WJK: 추가
     val scope = rememberCoroutineScope()
 
-    // 날짜 입력
-    if (showDatePicker) {
-        val today = LocalDate.now()
-        DatePickerDialog(context, { _, y, m, d ->
-            val date = LocalDate.of(y, m + 1, d)
-            selectedDateTime = date.atTime(LocalTime.of(0, 0))
+    // 화면 종료 시, 상태 초기화
+    DisposableEffect(Unit) {
+        onDispose {
             showDatePicker = false
-            showTimePicker = true
-        }, today.year, today.monthValue - 1, today.dayOfMonth).show()
+            showTimePicker = false
+            showDestinationSelector = false
+            selectedDateTime = null
+        }
+    }
+
+    // 날짜 입력
+    LaunchedEffect(showDatePicker) {
+        if (showDatePicker) {
+            val today = LocalDate.now()
+            DatePickerDialog(
+                context,
+                { _, y, m, d ->
+                    val date = LocalDate.of(y, m + 1, d)
+                    selectedDateTime = date.atTime(LocalTime.of(0, 0))
+                    showDatePicker = false
+                    showTimePicker = true
+                },
+                today.year,
+                today.monthValue - 1,
+                today.dayOfMonth
+            ).show()
+        }
     }
 
     // 시간 입력
-    if (showTimePicker && selectedDateTime != null) {
-        TimePickerDialog(context, { _, h, m ->
-            selectedDateTime = selectedDateTime!!.withHour(h).withMinute(m)
-            showTimePicker = false
-            showDestinationSelector = true  // 해당 변수로 날짜 및 시간 입력 여부 파악
-        }, 9, 0, true).show()
+    LaunchedEffect(showTimePicker) {
+        if (showTimePicker && selectedDateTime != null) {
+            TimePickerDialog(
+                context,
+                { _, h, m ->
+                    selectedDateTime = selectedDateTime!!.withHour(h).withMinute(m)
+                    showTimePicker = false
+                    showDestinationSelector = true
+                },
+                9,
+                0,
+                true
+            ).show()
+        }
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
