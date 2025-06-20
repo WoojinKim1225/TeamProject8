@@ -47,6 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.teamproject8.WJKfile.RoomDB.Logs.LogsDatabase
 import com.example.teamproject8.WJKfile.RoomDB.Logs.LogsViewModel
 import com.example.teamproject8.WJKfile.RoomDB.Logs.LogsViewModelFactory
@@ -73,9 +74,9 @@ fun Favorites() {
 }
 
 @Composable
-fun FavoritesWithCalendar(viewModel: LogsViewModel = viewModel(
+fun FavoritesWithCalendar(navController: NavController, viewModel: LogsViewModel = viewModel(
     factory = LogsViewModelFactory(
-        dao = LogsDatabase.getDBInstance(LocalContext.current).getItemDao()
+        dao = LogsDatabase.getDBInstance(navController.context).getItemDao()
     )
 )) {
     val today = remember { LocalDateTime.now() }
@@ -313,12 +314,4 @@ private fun isHoliday(date: LocalDate?): Boolean {
     )
 
     return fixedHolidays.contains(Pair(month, day))
-}
-
-@Preview
-@Composable
-private fun FavoritesPreview() {
-    MaterialTheme {
-        FavoritesWithCalendar()
-    }
 }

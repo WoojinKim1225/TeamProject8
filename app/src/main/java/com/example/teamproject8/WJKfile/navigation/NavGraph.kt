@@ -31,7 +31,7 @@ fun NavGraph(navController: NavHostController) {
             SavedUI(navController)
         }
         composable(Routes.Logs.route){
-            FavoritesWithCalendar()
+            FavoritesWithCalendar(navController)
         }
     }
 }
