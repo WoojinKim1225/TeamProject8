@@ -6,9 +6,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.example.teamproject8.WJKfile.RoomDB.Navigations.NavigationEntity
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Dao
 interface LogsDao {
@@ -25,13 +25,13 @@ interface LogsDao {
     suspend fun GetItemById(itemId: Int): LogsEntity?
 
     @Query("SELECT * FROM logs_table WHERE arrivalTime BETWEEN :startDate AND :endDate ORDER BY arrivalTime ASC")
-    suspend fun getItemsByWeek(
-        startDate: LocalDate,
-        endDate: LocalDate
+    suspend fun getItemsByBetween(
+        startDate: LocalDateTime,
+        endDate: LocalDateTime
     ): List<LogsEntity>
 
-    @Query("SELECT * FROM logs_table WHERE DATE(arrivalTime) = :targetDate")
-    suspend fun getItemsByDate(targetDate: LocalDate): List<LogsEntity>
+    /*@Query("SELECT * FROM logs_table WHERE arrivalTime.year = :targetYear AND arrivalTime.month = :month ORDER BY arrivalTime ASC")
+    suspend fun getItemsByDate(targetYear: Int, targetMonth: Int, targetDay: Int): List<LogsEntity>*/
 
     @Update
     suspend fun UpdateItem(logsEntity: LogsEntity): Int

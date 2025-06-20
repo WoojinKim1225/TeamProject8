@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.temporal.WeekFields
 
 class LogsViewModel(private val dao: LogsDao) : ViewModel() {
@@ -18,33 +19,23 @@ class LogsViewModel(private val dao: LogsDao) : ViewModel() {
         private set
 
     fun loadLogsForDate(date: LocalDate) {
+        val startDateTime = date.atStartOfDay()
+        val endDateTime = date.plusDays(1).atStartOfDay()
         viewModelScope.launch {
-            dateLogs = dao.getItemsByDate(date)
+            dateLogs = dao.getItemsByBetween(startDateTime, endDateTime)
         }
     }
 
     fun loadLogsForMonth(year: Int, month: Int) {
         val (start, end) = getStartAndEndOfMonth(year, month)
         viewModelScope.launch {
-            dao.GetAllItems().collect { emittedList ->
-                logs = emittedList
-            }
+            logs = dao.getItemsByBetween(start, end)
         }
     }
 
-    private fun getStartAndEndOfWeek(year: Int, week: Int): Pair<LocalDate, LocalDate> {
-        val weekFields = WeekFields.of(DayOfWeek.MONDAY, 1)
-        val startOfWeek = LocalDate
-            .of(year, 1, 1)
-            .with(weekFields.weekOfYear(), week.toLong())
-            .with(weekFields.dayOfWeek(), 1)
-        val endOfWeek = startOfWeek.plusDays(6)
-        return startOfWeek to endOfWeek
-    }
-
-    private fun getStartAndEndOfMonth(year: Int, month: Int): Pair<LocalDate, LocalDate> {
-        val startOfMonth = LocalDate.of(year, month, 1)
-        val endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth())
+    private fun getStartAndEndOfMonth(year: Int, month: Int): Pair<LocalDateTime, LocalDateTime> {
+        val startOfMonth = LocalDate.of(year, month, 1).atStartOfDay()
+        val endOfMonth = LocalDate.of(year, month, 1).atStartOfDay().plusMonths(1)
         return startOfMonth to endOfMonth
     }
 }

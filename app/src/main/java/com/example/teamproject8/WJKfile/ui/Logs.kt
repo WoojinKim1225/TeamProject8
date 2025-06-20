@@ -280,7 +280,11 @@ fun CalendarGrid(month: YearMonth, viewModel: LogsViewModel) {
                             .weight(1f)
                             .aspectRatio(1f)
                             .padding(4.dp)
-                            .clickable(onClick = {viewModel.loadLogsForDate(date)})
+                            .clickable(onClick = {
+
+                                viewModel.loadLogsForDate(date)
+                                Log.i("log", viewModel.dateLogs.toString())
+                            })
                     ) {
                         Box(
                             modifier = Modifier.fillMaxSize()
