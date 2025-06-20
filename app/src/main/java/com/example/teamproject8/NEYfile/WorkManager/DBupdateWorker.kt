@@ -10,6 +10,8 @@ import androidx.work.WorkerParameters
 import com.example.teamproject8.BuildConfig
 import com.example.teamproject8.MYNfile.MapsPackage.GoogleDirectionsApiService
 import com.example.teamproject8.MainActivity
+import com.example.teamproject8.WJKfile.RoomDB.Logs.LogsDatabase
+import com.example.teamproject8.WJKfile.RoomDB.Logs.LogsEntity
 import com.example.teamproject8.WJKfile.RoomDB.Navigations.NavigationDatabase
 import com.example.teamproject8.WJKfile.transit.getArrivalTransitDirection
 import com.example.week13.makeNotification
@@ -54,6 +56,10 @@ class DBupdateWorker(context: Context, params: WorkerParameters) :
         val db = NavigationDatabase.getDBInstance(applicationContext)
         val dao = db.getItemDao()
         val item = dao.GetItemById(item_id)
+
+        //log DB
+        val logDb = LogsDatabase.getDBInstance(applicationContext)
+        val logDao = logDb.getItemDao()
 
         //UPDATE DB
         if (item != null) {
@@ -113,6 +119,17 @@ class DBupdateWorker(context: Context, params: WorkerParameters) :
 
                 item.doWork = false
                 dao.UpdateItem(item)
+
+                val logItem = LogsEntity(
+                    id = item.id,
+                    title = TODO(),
+                    origin = item.origin,
+                    destination = item.destination,
+                    arrivalTime = item.arrivalTime,
+                    isSuccess = true
+                )
+
+                logDao.InsertItem(logItem)
             }
 
             Log.d("WorkManager1", "$item_id Worker work")
